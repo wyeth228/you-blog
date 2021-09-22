@@ -1,7 +1,5 @@
 <template>
   <main class="index">
-    <div class="container mx-auto">
-      <h1>Hello index!</h1>
-    </div>
+    <div class="container mx-auto"></div>
   </main>
 </template>
