@@ -1,7 +1,7 @@
 <template>
-  <main class="index">
+  <header class="header">
     <div class="container mx-auto">
-      <h1>Hello index!</h1>
+      <h1>The Header</h1>
     </div>
-  </main>
+  </header>
 </template>

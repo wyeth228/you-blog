@@ -1,7 +1,7 @@
 <template>
-  <main class="index">
+  <footer class="footer">
     <div class="container mx-auto">
-      <h1>Hello index!</h1>
+      <h1>The Footer</h1>
     </div>
-  </main>
+  </footer>
 </template>
