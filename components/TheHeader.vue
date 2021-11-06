@@ -1,22 +1,38 @@
 <template>
-  <header class="header py-4 border-b-2 border-gray-500 border-opacity-20">
+  <header class="header p-2 border-b-2 border-gray-500 border-opacity-20">
     <div class="container mx-auto flex items-center justify-between">
-      <div class="header__logo flex items-center mr-8">
+      <div class="header__logo flex-1 flex items-center mr-8">
         <nuxt-link to="/">
           <h1 class="text-3xl font-bold">
             YOU<span class="text-green-300">BLOG</span>
           </h1>
         </nuxt-link>
       </div>
-      <div class="header__hrefs flex items-center uppercase font-bold">
-        <nuxt-link class="flex items-center pl-2 pr-2 mr-8" to="/">
+      <div
+        class="header__hrefs flex-1 flex items-center justify-end uppercase font-bold"
+      >
+        <nuxt-link
+          class="flex items-center pl-2 pr-2 ml-8 mr-8 hover:text-green-300 transition"
+          to="/"
+        >
           News
         </nuxt-link>
-        <nuxt-link class="flex items-center pl-2 pr-2" to="/auth">
-          Auth
+        |
+        <nuxt-link
+          class="flex items-center pl-2 pr-2 ml-8 mr-8 hover:text-green-300 transition"
+          to="/auth"
+        >
+          Profile
+        </nuxt-link>
+        |
+        <nuxt-link
+          class="flex items-center pl-2 pr-2 ml-8 hover:text-green-300 transition"
+          to="/profile"
+        >
+          About Us
         </nuxt-link>
       </div>
-      <div class="header__right">
+      <div class="header__right flex-1 flex items-center justify-end">
         <button class="p-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"

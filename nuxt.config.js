@@ -1,7 +1,8 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: false,
   head: {
-    title: "webmag-blog",
+    title: "YouBlog",
     htmlAttrs: {
       lang: "en",
     },
