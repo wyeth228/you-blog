@@ -1,38 +1,41 @@
 <template>
   <header class="header p-2 border-b-2 border-gray-500 border-opacity-20">
     <div class="container mx-auto flex items-center justify-between">
-      <div class="header__logo flex-1 flex items-center mr-8">
+      <!-- Header logo -->
+      <div class="flex-1 flex items-center">
         <nuxt-link to="/">
           <h1 class="text-3xl font-bold">
             YOU<span class="text-green-300">BLOG</span>
           </h1>
         </nuxt-link>
       </div>
-      <div
-        class="header__hrefs flex-1 flex items-center justify-end uppercase font-bold"
-      >
+
+      <!-- Header hrefs -->
+      <div class=" flex-1 flex items-center justify-center uppercase font-bold">
         <nuxt-link
-          class="flex items-center pl-2 pr-2 ml-8 mr-8 hover:text-green-300 transition"
+          class="flex items-center mr-8 hover:text-green-300 transition"
           to="/"
         >
-          News
+          Новости
         </nuxt-link>
         |
         <nuxt-link
-          class="flex items-center pl-2 pr-2 ml-8 mr-8 hover:text-green-300 transition"
-          to="/auth"
-        >
-          Profile
-        </nuxt-link>
-        |
-        <nuxt-link
-          class="flex items-center pl-2 pr-2 ml-8 hover:text-green-300 transition"
+          class="flex items-center ml-8 mr-8 hover:text-green-300 transition"
           to="/profile"
         >
-          About Us
+          Профиль
+        </nuxt-link>
+        |
+        <nuxt-link
+          class="flex items-center ml-8 hover:text-green-300 transition"
+          to="/profile"
+        >
+          Мы
         </nuxt-link>
       </div>
-      <div class="header__right flex-1 flex items-center justify-end">
+
+      <!-- Header search -->
+      <div class="flex-1 flex items-center justify-end">
         <button class="p-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
