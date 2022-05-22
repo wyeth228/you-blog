@@ -11,7 +11,7 @@
       </div>
 
       <!-- Header hrefs -->
-      <div class=" flex-1 flex items-center justify-center uppercase font-bold">
+      <div class="flex-1 flex items-center justify-center uppercase font-bold">
         <nuxt-link
           class="flex items-center mr-8 hover:text-green-300 transition"
           to="/"
