@@ -1,8 +1,10 @@
 import { Router } from "express";
 import UsersController from "../controllers/UsersController";
 import UsersService from "../services/UsersService";
-import Valid from "../helpers/Valid";
+import ValidUserCredentials from "../helpers/ValidUserCredentials";
 import ApiErrorsHandler from "../helpers/ApiErrorsHandler";
+import StringFilters from "../helpers/StringFilters";
+import xss from "xss";
 
 const express = require("express");
 
@@ -10,11 +12,12 @@ const router: Router = new express.Router();
 
 const usersController: UsersController = new UsersController(
   new UsersService(),
-  new Valid(),
-  new ApiErrorsHandler()
+  new ValidUserCredentials(),
+  new ApiErrorsHandler(),
+  new StringFilters(xss)
 );
 
-router.post("/signin", usersController.signin);
-router.post("/signup", usersController.signup);
+router.post("/users/signin", usersController.signin.bind(usersController));
+router.post("/users/signup", usersController.signup.bind(usersController));
 
 export default router;

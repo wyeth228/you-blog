@@ -1,4 +1,4 @@
-export default class Valid {
+export default class ValidUserCredentials {
   email(email: any): boolean {
     if (typeof email !== "string") {
       return false;
@@ -16,14 +16,24 @@ export default class Valid {
   }
 
   username(username: any): boolean {
-    if (typeof username === "string") {
+    if (typeof username !== "string") {
+      return false;
+    }
+
+    if (!/^[а-яa-z0-9_-]{3,16}$/.test(username)) {
+      return false;
     }
 
     return true;
   }
 
   password(password: any): boolean {
-    if (typeof password === "string") {
+    if (typeof password !== "string") {
+      return false;
+    }
+
+    if (password.length < 8 || password.length > 25) {
+      return false;
     }
 
     return true;

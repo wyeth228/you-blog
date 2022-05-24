@@ -6,8 +6,8 @@ const express = require("express");
 const app: Application = express();
 const PORT = process.env.PORT || 1000;
 
-app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ limit: "10kb" }));
 
 app.use("/", usersRouter);
 
