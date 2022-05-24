@@ -1,4 +1,5 @@
 import {
+  IApiErrorLangs,
   ApiErrorTranslations,
   ApiErrorTypes,
 } from "../data/ApiErrorTranslations";
@@ -9,13 +10,14 @@ interface IApiErrorResponse {
 }
 
 export default class ApiErrorsHandler {
-  static genErrorData(
+  genErrorData(
     statusCode: number,
-    errorType: ApiErrorTypes
+    errorType: ApiErrorTypes,
+    lang: keyof IApiErrorLangs
   ): IApiErrorResponse {
     return {
       code: statusCode,
-      message: ApiErrorTranslations[errorType]["ru"],
+      message: ApiErrorTranslations[errorType][lang] || "No info",
     };
   }
 }
