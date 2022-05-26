@@ -1,3 +1,5 @@
+import UsersMySQLRepository from "../repositories/UsersMySQLRepository";
+
 interface IUserSignupData {
   email: string;
   username: string;
@@ -5,7 +7,11 @@ interface IUserSignupData {
 }
 
 export default class UsersService {
-  constructor() {}
+  private readonly _usersMySQLRepository: UsersMySQLRepository;
+
+  constructor(usersMySQLRepository: UsersMySQLRepository) {
+    this._usersMySQLRepository = usersMySQLRepository;
+  }
 
   signup(userData: IUserSignupData): void {}
 }
