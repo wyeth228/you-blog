@@ -5,7 +5,7 @@ interface IUserSignupData {
 }
 
 export default class UsersService {
-  signup(userData: IUserSignupData): void {
-    console.log(userData);
-  }
+  constructor() {}
+
+  signup(userData: IUserSignupData): void {}
 }
