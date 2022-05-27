@@ -1,3 +1,4 @@
+import { Connection } from "mysql2/promise";
 import MySQLRepository from "./MySQLRepository";
 
 interface IUser {
@@ -7,7 +8,7 @@ interface IUser {
 }
 
 export default class UsersMySQLRepository extends MySQLRepository {
-  constructor(mysqlConnection: {}) {
+  constructor(mysqlConnection: Connection) {
     super(mysqlConnection);
   }
 

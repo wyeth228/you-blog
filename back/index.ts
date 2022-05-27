@@ -1,24 +1,26 @@
 import { Application } from "express";
 import { Connection } from "mysql2/promise";
-import usersRouter from "./routes/Users";
+import getUsersRouter from "./routes/UsersRouter";
+import mysql2 from "mysql2/promise";
 
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
 const express = require("express");
-const mysql = require("mysql2/promise");
-const isDevelopment = process.env.NODE_ENV === "development";
 
 async function startApplication() {
   const app: Application = express();
   const PORT = process.env.PORT || 1000;
 
-  const mysqlConnection: Connection = await mysql.createConnection({
-    host: "localhost",
-  });
-
   app.use(express.json({ limit: "10kb" }));
   app.use(express.urlencoded({ limit: "10kb" }));
 
-  app.use("/", usersRouter);
+  const mySQLConnection: Connection = await mysql2.createConnection({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    database: process.env.MYSQL_DATABASE,
+    password: process.env.MYSQL_PASSWORD,
+  });
+
+  app.use("/", getUsersRouter(mySQLConnection));
 
   app.listen(PORT, () => {
     console.log("Server listen on " + PORT + "...");
