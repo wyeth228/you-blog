@@ -60,8 +60,23 @@ export default class UsersController {
       return;
     }
 
-    this._usersService.signup({ email, username, password });
+    try {
+      const { accessToken, refreshToken } = this._usersService.signup({
+        email,
+        username,
+        password,
+      });
 
-    res.send("1");
+      res.status(201).json({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+    } catch (e: any) {
+      console.error(e);
+
+      res
+        .status(500)
+        .json(this._apiErrorsHandler.genErrorData(500, "server-error", "ru"));
+    }
   }
 }

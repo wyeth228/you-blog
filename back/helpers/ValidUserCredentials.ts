@@ -20,7 +20,7 @@ export default class ValidUserCredentials {
       return false;
     }
 
-    if (!/^[а-яa-z0-9_-]{3,16}$/.test(username)) {
+    if (!/^[А-Яа-яA-Za-z0-9_-]{3,16}$/.test(username)) {
       return false;
     }
 

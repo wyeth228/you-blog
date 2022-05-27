@@ -12,5 +12,10 @@ export default class UsersMySQLRepository extends MySQLRepository {
     super(mysqlConnection);
   }
 
-  save(user: IUser): void {}
+  async save(user: IUser): Promise<any> {
+    await this._connection.query(
+      "INSERT INTO users (email, username, password) VALUES (?, ?, ?)",
+      [user.email, user.username, user.password]
+    );
+  }
 }

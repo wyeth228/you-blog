@@ -1,4 +1,4 @@
-import xss from "xss";
+const xss = require("xss");
 
 export default class StringFilters {
   xssFiltrate: typeof xss;

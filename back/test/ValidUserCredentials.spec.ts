@@ -31,6 +31,7 @@ describe("Testing the validUserCredentials class methods", () => {
     expect(
       validUserCredentials.username("<script>alert(/Hello!/);</script>")
     ).toBe(false);
+    expect(validUserCredentials.username("Hasm")).toBe(true);
   });
 
   test("Testing the password method", () => {

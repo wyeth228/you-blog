@@ -50,4 +50,8 @@ const apiErrorTranslations = createApiErrorTranslations({
     ru: "Ненадежный пароль",
     en: "Unreliable password",
   },
+  "server-error": {
+    ru: "Ошибка сервера",
+    en: "Server error",
+  },
 });
