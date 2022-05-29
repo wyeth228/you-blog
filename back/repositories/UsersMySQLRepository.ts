@@ -13,9 +13,9 @@ export default class UsersMySQLRepository extends MySQLRepository {
   }
 
   async save(user: IUser): Promise<any> {
-    await this._connection.query(
+    console.log(await this._connection.query(
       "INSERT INTO users (email, username, password) VALUES (?, ?, ?)",
       [user.email, user.username, user.password]
-    );
+    ));
   }
 }
