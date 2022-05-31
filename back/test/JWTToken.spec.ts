@@ -26,14 +26,31 @@ describe("Testing JWTToken class", () => {
   test("Verify jwt token", () => {
     expect(
       jwtToken.valid(
-        "eyJpc3MiOiJ5b3VibG9nIiwiZXhwIjoxMDAsInVzZXJJZCI6MX0",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ5b3VibG9nIiwiZXhwIjoxNjU0MDc0NjI4NTQ4LCJ1c2VySWQiOjF9.PhcxcU0clXuydomU1lEhc9zv8bGsLFhvevPn-ZC89JM",
         "secretkey",
         "youblog"
       )
-    ).toEqual({
-      iss: "youblog",
-      exp: 100,
-      userId: 1,
-    });
+    ).toBe(true);
+    expect(
+      jwtToken.valid(
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ5b3VibG9nIiwiZXhwIjoxNjU0MDc0NjI4NTQ4LCJ1c2VySWQiOjF9.PhcxcU0clXuydomU1lEhc9zv8bGsLFhvevPn-ZC89JM",
+        "WRONG SECRET KEY",
+        "youblog"
+      )
+    ).toBe(false);
+    expect(
+      jwtToken.valid(
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ5b3VibG9nIiwiZXhwIjoxNjU0MDc0NjI4NTQ4LCJ1c2VySWQiOjF9.PhcxcU0clXuydomU1lEhc9zv8bGsLFhvevPn-ZC89JM",
+        "secretkey",
+        "WRONG ISSUER OF an JWT"
+      )
+    ).toBe(false);
+    expect(
+      jwtToken.valid(
+        "REPLACEDTHEHEADER.REPLACEDTHEPAYLOAD.ANDTHEWRONGSINATURE",
+        "secretkey",
+        "youblog"
+      )
+    ).toBe(false);
   });
 });

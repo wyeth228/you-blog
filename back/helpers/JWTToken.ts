@@ -26,23 +26,29 @@ export default class JWTToken {
   valid(token: string, secret: string, iss: string): boolean {
     const [encodedHeader, encodedPayload, encodedSignature] = token.split(".");
 
-    const header = JSON.parse(this._base64.decodeUrl(encodedHeader));
-    const payload = JSON.parse(this._base64.decodeUrl(encodedPayload));
+    try {
+      const header = JSON.parse(this._base64.decodeUrl(encodedHeader));
+      const payload = JSON.parse(this._base64.decodeUrl(encodedPayload));
 
-    const unsignedToken: string =
-      this._base64.encodeUrl(header) + "." + this._base64.encodeUrl(payload);
+      const unsignedToken: string =
+        this._base64.encodeUrl(JSON.stringify(header)) +
+        "." +
+        this._base64.encodeUrl(JSON.stringify(payload));
 
-    const signature = this.createSignature(unsignedToken, secret);
+      const signature = this.createSignature(unsignedToken, secret);
 
-    if (signature !== encodedSignature) {
-      return false;
-    }
+      if (signature !== encodedSignature) {
+        return false;
+      }
 
-    if (Date.now() > payload.exp) {
-      return false;
-    }
+      if (Date.now() > payload.exp) {
+        return false;
+      }
 
-    if (iss !== payload.iss) {
+      if (iss !== payload.iss) {
+        return false;
+      }
+    } catch (e: any) {
       return false;
     }
 
