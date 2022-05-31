@@ -28,7 +28,7 @@ export default class UsersService {
     this._jwtToken = jwtToken;
   }
 
-  signup(userData: IUserSignupData): ITokens {
+  async signup(userData: IUserSignupData): Promise<ITokens> {
     userData.password = this._crypto
       .pbkdf2Sync(
         userData.password,
@@ -39,7 +39,7 @@ export default class UsersService {
       )
       .toString();
 
-    this._usersMySQLRepository.save({
+    const userId = await this._usersMySQLRepository.save({
       email: userData.email,
       username: userData.email,
       password: userData.password,
@@ -50,7 +50,7 @@ export default class UsersService {
         {
           iss: process.env.JWT_ISS,
           exp: Date.now() + Number(process.env.JWT_ACCESS_TIME),
-          userId: 1,
+          userId: userId,
         },
         process.env.JWT_SECRET
       ),
@@ -58,7 +58,7 @@ export default class UsersService {
         {
           iss: process.env.JWT_ISS,
           exp: Date.now() + Number(process.env.JWT_REFRESH_TIME),
-          userId: 1,
+          userId: userId,
         },
         process.env.JWT_SECRET
       ),

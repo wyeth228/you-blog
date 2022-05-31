@@ -25,7 +25,7 @@ export default class UsersController {
 
   signin(req: Request, res: Response): void {}
 
-  signup(req: Request, res: Response): void {
+  async signup(req: Request, res: Response): Promise<void> {
     const { email, username, password } = req.body;
 
     if (!this._validUserCredentials.email(email)) {
@@ -61,16 +61,24 @@ export default class UsersController {
     }
 
     try {
-      const { accessToken, refreshToken } = this._usersService.signup({
+      const { accessToken, refreshToken } = await this._usersService.signup({
         email,
         username,
         password,
       });
 
-      res.status(201).json({
-        access_token: accessToken,
-        refresh_token: refreshToken,
+      res.cookie("access_token", accessToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
       });
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+      });
+
+      res.status(201).end();
     } catch (e: any) {
       console.error(e);
 
