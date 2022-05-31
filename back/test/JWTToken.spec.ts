@@ -8,7 +8,7 @@ import JWTToken from "../helpers/JWTToken";
 describe("Testing JWTToken class", () => {
   const jwtToken = new JWTToken(Crypto, new Base64(Buffer));
 
-  test("creating jwt token", () => {
+  test("Creating jwt token", () => {
     expect(
       jwtToken.create(
         {
@@ -21,5 +21,19 @@ describe("Testing JWTToken class", () => {
     ).toBe(
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ5b3VibG9nIiwiZXhwIjoxMDAsInVzZXJJZCI6MX0.sASYRdk4IbNI8teXHJ1GZMXQWg6V67tVNiFtPo-BY10"
     );
+  });
+
+  test("Verify jwt token", () => {
+    expect(
+      jwtToken.valid(
+        "eyJpc3MiOiJ5b3VibG9nIiwiZXhwIjoxMDAsInVzZXJJZCI6MX0",
+        "secretkey",
+        "youblog"
+      )
+    ).toEqual({
+      iss: "youblog",
+      exp: 100,
+      userId: 1,
+    });
   });
 });

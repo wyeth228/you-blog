@@ -16,7 +16,40 @@ export default class JWTToken {
     this._base64 = base64;
   }
 
-  create(payload: IJWTPayload, secret): string {
+  private createSignature(unsignedToken: string, secret: string): string {
+    return this._crypto
+      .createHmac("sha256", secret, { encoding: "binary" })
+      .update(unsignedToken)
+      .digest("base64url");
+  }
+
+  valid(token: string, secret: string, iss: string): boolean {
+    const [encodedHeader, encodedPayload, encodedSignature] = token.split(".");
+
+    const header = JSON.parse(this._base64.decodeUrl(encodedHeader));
+    const payload = JSON.parse(this._base64.decodeUrl(encodedPayload));
+
+    const unsignedToken: string =
+      this._base64.encodeUrl(header) + "." + this._base64.encodeUrl(payload);
+
+    const signature = this.createSignature(unsignedToken, secret);
+
+    if (signature !== encodedSignature) {
+      return false;
+    }
+
+    if (Date.now() > payload.exp) {
+      return false;
+    }
+
+    if (iss !== payload.iss) {
+      return false;
+    }
+
+    return true;
+  }
+
+  create(payload: IJWTPayload, secret: string): string {
     const header = JSON.stringify({
       alg: "HS256",
       typ: "JWT",
@@ -29,10 +62,7 @@ export default class JWTToken {
       "." +
       this._base64.encodeUrl(stringPayload);
 
-    const signature: string = this._crypto
-      .createHmac("sha256", secret, { encoding: "binary" })
-      .update(unsignedToken)
-      .digest("base64url");
+    const signature: string = this.createSignature(unsignedToken, secret);
 
     return (
       this._base64.encodeUrl(header) +
