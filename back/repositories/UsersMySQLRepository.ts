@@ -1,7 +1,6 @@
-import { Connection } from "mysql2/promise";
 import MySQLRepository from "./MySQLRepository";
 
-import { ResultSetHeader } from "mysql2";
+import { Connection, ResultSetHeader } from "mysql2/promise";
 
 interface IUser {
   email: string;

@@ -6,18 +6,18 @@ import ApiErrorsHandler from "../helpers/ApiErrorsHandler";
 import StringFilters from "../helpers/StringFilters";
 
 export default class AuthController {
-  private readonly _usersService: AuthService;
+  private readonly _authService: AuthService;
   private readonly _validUserCredentials: ValidUserCredentials;
   private readonly _apiErrorsHandler: ApiErrorsHandler;
   private readonly _stringFilters: StringFilters;
 
   constructor(
-    usersService: AuthService,
+    authService: AuthService,
     validUserCredentials: ValidUserCredentials,
     apiErrorsHandler: ApiErrorsHandler,
     stringFilters: StringFilters
   ) {
-    this._usersService = usersService;
+    this._authService = authService;
     this._validUserCredentials = validUserCredentials;
     this._apiErrorsHandler = apiErrorsHandler;
     this._stringFilters = stringFilters;
@@ -61,7 +61,7 @@ export default class AuthController {
     }
 
     try {
-      const { accessToken, refreshToken } = await this._usersService.signup({
+      const { accessToken, refreshToken } = await this._authService.signup({
         email,
         username,
         password,
@@ -87,4 +87,15 @@ export default class AuthController {
         .json(this._apiErrorsHandler.genErrorData(500, "server-error", "ru"));
     }
   }
+
+  vkAuth(req: Request, res: Response): void {
+    const { vkCode, redirectUri } = req.body;
+
+    if (!vkCode || !redirectUri) {
+    } else {
+      this._authService.vkAuth(vkCode, redirectUri);
+    }
+  }
+
+  googleAuth(req: Request, res: Response): void {}
 }

@@ -1,5 +1,6 @@
-import { Connection } from "mysql2/promise";
 import IRepository from "./BaseRepository";
+
+import { Connection } from "mysql2/promise";
 
 export default abstract class MySQLRepository implements IRepository {
   protected readonly _connection: Connection;

@@ -1,5 +1,7 @@
-import UsersMySQLRepository from "../repositories/UsersMySQLRepository";
+import * as HTTPS from "https";
 import * as Crypto from "crypto";
+
+import UsersMySQLRepository from "../repositories/UsersMySQLRepository";
 import JWTToken from "../helpers/JWTToken";
 
 interface IUserSignupData {
@@ -17,15 +19,18 @@ export default class AuthService {
   private readonly _usersMySQLRepository: UsersMySQLRepository;
   private readonly _crypto: typeof Crypto;
   private readonly _jwtToken: JWTToken;
+  private readonly _https: typeof HTTPS;
 
   constructor(
     usersMySQLRepository: UsersMySQLRepository,
     crypto: typeof Crypto,
-    jwtToken: JWTToken
+    jwtToken: JWTToken,
+    https: typeof HTTPS
   ) {
     this._usersMySQLRepository = usersMySQLRepository;
     this._crypto = crypto;
     this._jwtToken = jwtToken;
+    this._https = https;
   }
 
   async signup(userData: IUserSignupData): Promise<ITokens> {
@@ -63,5 +68,13 @@ export default class AuthService {
         process.env.JWT_SECRET
       ),
     };
+  }
+
+  async vkAuth(vkCode: string, redirectUri: string): Promise<void> {
+    console.log(
+      await this._https.get(
+        `${process.env.VK_ACCESS_TOKEN_URL}?client_id=${process.env.VK_CLIENT_ID}&client_secret=${process.env.VK_CLIENT_SECRET}&redirect_uri=${redirectUri}&code=${vkCode}`
+      )
+    );
   }
 }
