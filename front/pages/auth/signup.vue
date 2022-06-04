@@ -2,7 +2,7 @@
   <main class="w-full max-w-screen-sm">
     <!-- Форма регистрации  -->
     <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-6">
-      <h1 class="text-4xl mb-5">Зарегистрироваться</h1>
+      <h1 class="text-4xl text-center mb-6">Зарегистрироваться</h1>
 
       <div class="mb-3">
         <label
@@ -12,6 +12,7 @@
           E-mail
         </label>
         <input
+          v-model="email"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="email"
           placeholder="box@email.su"
@@ -26,6 +27,7 @@
           Никнейм
         </label>
         <input
+          v-model="username"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
           placeholder="Ник228"
@@ -40,6 +42,7 @@
           Пароль
         </label>
         <input
+          v-model="password"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
           placeholder="******************"
@@ -54,6 +57,7 @@
           Введите пароль еще раз
         </label>
         <input
+          v-model="password2"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
           placeholder="******************"
@@ -62,8 +66,9 @@
       </div>
       <div class="flex items-center justify-between">
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="button"
+          class="bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit"
+          :disabled="{ formValid }"
         >
           Регистрация
         </button>
@@ -74,7 +79,7 @@
     <article class="w-full max-w-screen-sm shadow-md p-6 text-center mt-2">
       <span>Уже есть аккаунт?</span>
       <nuxt-link
-        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+        class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-500"
         to="/auth/signin"
       >
         Войдите
@@ -88,5 +93,12 @@ import Vue from "vue";
 
 export default Vue.extend({
   layout: "auth",
+
+  data: () => ({
+    email: "",
+    username: "",
+    password: "",
+    password2: "",
+  }),
 });
 </script>

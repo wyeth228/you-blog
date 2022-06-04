@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 
-import UsersService from "../services/UsersService";
+import AuthService from "../services/AuthService";
 import ValidUserCredentials from "../helpers/ValidUserCredentials";
 import ApiErrorsHandler from "../helpers/ApiErrorsHandler";
 import StringFilters from "../helpers/StringFilters";
 
-export default class UsersController {
-  private readonly _usersService: UsersService;
+export default class AuthController {
+  private readonly _usersService: AuthService;
   private readonly _validUserCredentials: ValidUserCredentials;
   private readonly _apiErrorsHandler: ApiErrorsHandler;
   private readonly _stringFilters: StringFilters;
 
   constructor(
-    usersService: UsersService,
+    usersService: AuthService,
     validUserCredentials: ValidUserCredentials,
     apiErrorsHandler: ApiErrorsHandler,
     stringFilters: StringFilters

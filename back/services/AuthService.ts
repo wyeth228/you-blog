@@ -13,7 +13,7 @@ interface ITokens {
   refreshToken: string;
 }
 
-export default class UsersService {
+export default class AuthService {
   private readonly _usersMySQLRepository: UsersMySQLRepository;
   private readonly _crypto: typeof Crypto;
   private readonly _jwtToken: JWTToken;
@@ -37,11 +37,11 @@ export default class UsersService {
         Number(process.env.PASSWORD_KEYLEN),
         process.env.PASSWORD_ALG
       )
-      .toString();
+      .toString("hex");
 
     const userId = await this._usersMySQLRepository.save({
       email: userData.email,
-      username: userData.email,
+      username: userData.username,
       password: userData.password,
     });
 

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { Connection } from "mysql2/promise";
 import * as Crypto from "crypto";
-import UsersController from "../controllers/UsersController";
-import UsersService from "../services/UsersService";
+import AuthConrtoller from "../controllers/AuthController";
+import AuthService from "../services/AuthService";
 import UsersMySQLRepository from "../repositories/UsersMySQLRepository";
 import ValidUserCredentials from "../helpers/ValidUserCredentials";
 import ApiErrorsHandler from "../helpers/ApiErrorsHandler";
@@ -14,12 +14,12 @@ import { Buffer } from "buffer";
 const express = require("express");
 const xss = require("xss");
 
-const getUsersRouter = (mySQLConnection: Connection): Router => {
+const getAuthRouter = (mySQLConnection: Connection): Router => {
   const router: Router = new express.Router();
   const jwtToken: JWTToken = new JWTToken(Crypto, new Base64(Buffer));
 
-  const usersController: UsersController = new UsersController(
-    new UsersService(
+  const authController: AuthConrtoller = new AuthConrtoller(
+    new AuthService(
       new UsersMySQLRepository(mySQLConnection),
       Crypto,
       jwtToken
@@ -29,10 +29,10 @@ const getUsersRouter = (mySQLConnection: Connection): Router => {
     new StringFilters(xss)
   );
 
-  router.post("/users/signin", usersController.signin.bind(usersController));
-  router.post("/users/signup", usersController.signup.bind(usersController));
+  router.post("/signin", authController.signin.bind(authController));
+  router.post("/signup", authController.signup.bind(authController));
 
   return router;
 };
 
-export default getUsersRouter;
+export default getAuthRouter;

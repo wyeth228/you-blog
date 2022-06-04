@@ -1,6 +1,6 @@
 import { Application } from "express";
 import { Connection } from "mysql2/promise";
-import getUsersRouter from "./routes/UsersRouter";
+import getAuthRouter from "./routes/AuthRouter";
 import * as mysql2 from "mysql2/promise";
 
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
@@ -20,7 +20,7 @@ async function startApplication() {
     password: process.env.MYSQL_PASSWORD,
   });
 
-  app.use("/", getUsersRouter(mySQLConnection));
+  app.use("/", getAuthRouter(mySQLConnection));
 
   app.listen(PORT, () => {
     console.log("Server listen on " + PORT + "...");
