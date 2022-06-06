@@ -9,13 +9,10 @@ interface IJWTPayload {
 }
 
 export default class JWTToken {
-  private readonly _crypto: typeof Crypto;
-  private readonly _base64: Base64;
-
-  constructor(crypto: typeof Crypto, base64: Base64) {
-    this._crypto = crypto;
-    this._base64 = base64;
-  }
+  constructor(
+    private readonly _crypto: typeof Crypto,
+    private readonly _base64: Base64
+  ) {}
 
   private createSignature(unsignedToken: string, secret: string): string {
     return this._crypto

@@ -2,26 +2,16 @@ import { Request, Response } from "express";
 
 import AuthService from "../services/AuthService";
 import ValidUserCredentials from "../helpers/ValidUserCredentials";
-import ApiErrorsHandler from "../helpers/ApiErrorsHandler";
+import ApiResponseHandler from "../helpers/ApiResponseHandler";
 import StringFilters from "../helpers/StringFilters";
 
 export default class AuthController {
-  private readonly _authService: AuthService;
-  private readonly _validUserCredentials: ValidUserCredentials;
-  private readonly _apiErrorsHandler: ApiErrorsHandler;
-  private readonly _stringFilters: StringFilters;
-
   constructor(
-    authService: AuthService,
-    validUserCredentials: ValidUserCredentials,
-    apiErrorsHandler: ApiErrorsHandler,
-    stringFilters: StringFilters
-  ) {
-    this._authService = authService;
-    this._validUserCredentials = validUserCredentials;
-    this._apiErrorsHandler = apiErrorsHandler;
-    this._stringFilters = stringFilters;
-  }
+    private readonly _authService: AuthService,
+    private readonly _validUserCredentials: ValidUserCredentials,
+    private readonly _apiResponseHandler: ApiResponseHandler,
+    private readonly _stringFilters: StringFilters
+  ) {}
 
   signin(req: Request, res: Response): void {}
 
@@ -31,7 +21,9 @@ export default class AuthController {
     if (!this._validUserCredentials.email(email)) {
       res
         .status(400)
-        .json(this._apiErrorsHandler.genErrorData(400, "email-invalid", "ru"));
+        .json(
+          this._apiResponseHandler.genErrorData(400, "email-invalid", "ru")
+        );
 
       return;
     }
@@ -44,7 +36,7 @@ export default class AuthController {
       res
         .status(400)
         .json(
-          this._apiErrorsHandler.genErrorData(400, "username-invalid", "ru")
+          this._apiResponseHandler.genErrorData(400, "username-invalid", "ru")
         );
 
       return;
@@ -54,7 +46,7 @@ export default class AuthController {
       res
         .status(400)
         .json(
-          this._apiErrorsHandler.genErrorData(400, "password-invalid", "ru")
+          this._apiResponseHandler.genErrorData(400, "password-invalid", "ru")
         );
 
       return;
@@ -67,6 +59,11 @@ export default class AuthController {
         password,
       });
 
+      res.cookie("auth_type", "simple", {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+      });
       res.cookie("access_token", accessToken, {
         httpOnly: true,
         sameSite: "strict",
@@ -84,18 +81,75 @@ export default class AuthController {
 
       res
         .status(500)
-        .json(this._apiErrorsHandler.genErrorData(500, "server-error", "ru"));
+        .json(this._apiResponseHandler.genErrorData(500, "server-error", "ru"));
     }
   }
 
-  vkAuth(req: Request, res: Response): void {
-    const { vkCode, redirectUri } = req.body;
+  async authWithVK(req: Request, res: Response): Promise<void> {
+    const { vk_code, redirect_url_after_vk_auth } = req.body;
 
-    if (!vkCode || !redirectUri) {
-    } else {
-      this._authService.vkAuth(vkCode, redirectUri);
+    if (!vk_code) {
+      res
+        .status(302)
+        .json(
+          this._apiResponseHandler.genRedirectData(
+            302,
+            `https://oauth.vk.com/authorize?client_id=${process.env.VK_CLIENT_ID}&redirect_uri=${redirect_url_after_vk_auth}&display=mobile&scope=offline&response_type=code`
+          )
+        );
+
+      return;
     }
+
+    const vkAuthorize = await this._authService.authWithVK(
+      vk_code,
+      redirect_url_after_vk_auth
+    );
+
+    if (!vkAuthorize) {
+      res.status(302).json(this._apiResponseHandler.genRedirectData(302, ""));
+
+      return;
+    }
+
+    // const { vkCode, redirectUri } = req.body;
+    // if (!vkCode) {
+    //   res.status(302).json({
+    //     code: 302,
+    //     redirect_uri: `https://oauth.vk.com/authorize?client_id=${process.env.VK_CLIENT_ID}&redirect_uri=${redirectUri}&display=mobile&scope=offline&response_type=code`,
+    //   });
+    //   return;
+    // }
+    // try {
+    //   const vkAuth = await this._authService.vkAuth(vkCode, redirectUri);
+    //   if (vkAuth) {
+    //   }
+    //   // res.cookie("auth_type", "vk", {
+    //   //   httpOnly: true,
+    //   //   sameSite: "strict",
+    //   //   secure: false,
+    //   // });
+    //   res.cookie("access_token", vkAuth.accessToken, {
+    //     httpOnly: true,
+    //     sameSite: "strict",
+    //     secure: false,
+    //   });
+    //   res.cookie("user_id", vkAuth.userId, {
+    //     httpOnly: true,
+    //     sameSite: "strict",
+    //     secure: false,
+    //   });
+    //   res.status(302).json({
+    //     code: 302,
+    //     redirect_uri: redirectUri + "?type=vk",
+    //   });
+    // } catch (e: any) {
+    //   console.error(e);
+    //   res
+    //     .status(500)
+    //     .json(this._apiResponseHandler.genErrorData(500, "server-error", "ru"));
+    // }
   }
 
-  googleAuth(req: Request, res: Response): void {}
+  authWithGoogle(req: Request, res: Response): void {}
 }

@@ -1,19 +1,19 @@
 import { Buffer } from "buffer";
 import * as express from "express";
-import * as HTTPS from "https";
 import * as Crypto from "crypto";
 
 import AuthConrtoller from "../controllers/AuthController";
 import AuthService from "../services/AuthService";
-import UsersMySQLRepository from "../repositories/UsersMySQLRepository";
+import { UsersMySQLRepository } from "../repositories/UsersMySQLRepository";
 import ValidUserCredentials from "../helpers/ValidUserCredentials";
-import ApiErrorsHandler from "../helpers/ApiErrorsHandler";
+import ApiResponseHandler from "../helpers/ApiResponseHandler";
 import StringFilters from "../helpers/StringFilters";
 import JWTToken from "../helpers/JWTToken";
 import Base64 from "../helpers/Base64";
 
 import xss from "xss";
 import { Connection } from "mysql2/promise";
+import Axios from "axios";
 
 const getAuthRouter = (mySQLConnection: Connection): express.Router => {
   const router: express.Router = express.Router();
@@ -24,17 +24,34 @@ const getAuthRouter = (mySQLConnection: Connection): express.Router => {
       new UsersMySQLRepository(mySQLConnection),
       Crypto,
       jwtToken,
-      HTTPS
+      Axios,
+      {
+        SALT: process.env.PASSWORD_SALT,
+        ITERATIONS: Number(process.env.PASSWORD_ITERATIONS),
+        KEYLEN: Number(process.env.PASSWORD_KEYLEN),
+        ALG: process.env.PASSWORD_ALG,
+      },
+      {
+        ISS: process.env.JWT_ISS,
+        ACCESS_TIME: Number(process.env.JWT_ACCESS_TIME),
+        REFRESH_TIME: Number(process.env.JWT_REFRESH_TIME),
+        SECRET: process.env.JWT_SECRET,
+      },
+      {
+        ACCESS_TOKEN_URL: process.env.VK_ACCESS_TOKEN_URL,
+        CLIENT_ID: process.env.VK_CLIENT_ID,
+        CLIENT_SECRET: process.env.VK_CLIENT_SECRET,
+      }
     ),
     new ValidUserCredentials(),
-    new ApiErrorsHandler(),
+    new ApiResponseHandler(),
     new StringFilters(xss)
   );
 
   router.post("/signin", authController.signin.bind(authController));
   router.post("/signup", authController.signup.bind(authController));
-  router.post("/vk", authController.vkAuth.bind(authController));
-  router.post("/google", authController.googleAuth.bind(authController));
+  router.post("/vk", authController.authWithVK.bind(authController));
+  router.post("/google", authController.authWithGoogle.bind(authController));
 
   return router;
 };

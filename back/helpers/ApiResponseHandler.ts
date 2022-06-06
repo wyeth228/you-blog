@@ -12,6 +12,11 @@ interface IApiErrorTranslation {
   [name: string]: IApiErrorLangs;
 }
 
+interface IApiRedirectResponse {
+  code: number;
+  redirect_url: string;
+}
+
 function createApiErrorTranslations<T extends IApiErrorTranslation>(
   translations: T
 ): Readonly<Record<keyof T, IApiErrorLangs>> {
@@ -20,7 +25,7 @@ function createApiErrorTranslations<T extends IApiErrorTranslation>(
 
 type ApiErrorTypes = keyof typeof apiErrorTranslations;
 
-export default class ApiErrorsHandler {
+export default class ApiResponseHandler {
   genErrorData(
     statusCode: number,
     errorType: ApiErrorTypes,
@@ -29,6 +34,16 @@ export default class ApiErrorsHandler {
     return {
       code: statusCode,
       message: apiErrorTranslations[errorType][lang] || "No info",
+    };
+  }
+
+  genRedirectData(
+    statusCode: number,
+    redirectUrl: string
+  ): IApiRedirectResponse {
+    return {
+      code: statusCode,
+      redirect_url: redirectUrl,
     };
   }
 }
