@@ -1,6 +1,6 @@
-import MySQLRepository from "./MySQLRepository";
-
 import { Connection, ResultSetHeader } from "mysql2/promise";
+
+import MySQLRepository from "./MySQLRepository";
 
 export interface IUserSaveData {
   email: string;
@@ -8,7 +8,7 @@ export interface IUserSaveData {
   password: string;
 }
 
-interface IUser {
+export interface IUser {
   id: number;
   email: string;
   username: string;
@@ -34,7 +34,7 @@ export class UsersMySQLRepository extends MySQLRepository {
   async findWithVKId(vkId: number): Promise<IUser> {
     const [rows] = await this._connection.query<ResultSetHeader>(
       "SELECT * FROM users WHERE vk_id = ?",
-      ["1"]
+      [vkId]
     );
 
     return rows[0];

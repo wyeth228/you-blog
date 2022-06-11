@@ -23,9 +23,9 @@ function createApiErrorTranslations<T extends IApiErrorTranslation>(
   return translations;
 }
 
-type ApiErrorTypes = keyof typeof apiErrorTranslations;
+export type ApiErrorTypes = keyof typeof apiErrorTranslations;
 
-export default class ApiResponseHandler {
+export class ApiResponseHandler {
   genErrorData(
     statusCode: number,
     errorType: ApiErrorTypes,
@@ -68,5 +68,13 @@ const apiErrorTranslations = createApiErrorTranslations({
   "server-error": {
     ru: "Ошибка сервера",
     en: "Server error",
+  },
+  "user-not-found": {
+    ru: "Пользователь не найден",
+    en: "User not found",
+  },
+  "wrong-credentials": {
+    ru: "Неправильные учетные данные",
+    en: "Wrong credentials",
   },
 });

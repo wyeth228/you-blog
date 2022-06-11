@@ -1,7 +1,8 @@
-import * as express from "express";
-
 import getAuthRouter from "./routes/AuthRouter";
+
+import * as express from "express";
 import * as mysql2 from "mysql2/promise";
+import * as cookieParser from "cookie-parser";
 
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
 
@@ -11,6 +12,7 @@ async function startApplication() {
 
   app.use(express.json({ limit: "10kb" }));
   app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+  app.use(cookieParser());
 
   const mySQLConnection: mysql2.Connection = await mysql2.createConnection({
     host: process.env.MYSQL_HOST,

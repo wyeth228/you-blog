@@ -1,19 +1,19 @@
 import * as Crypto from "crypto";
+import Axios from "axios";
 
 import {
   IUserSaveData,
+  IUser,
   UsersMySQLRepository,
 } from "../repositories/UsersMySQLRepository";
 import JWTToken from "../helpers/JWTToken";
-
-import Axios from "axios";
 
 interface IJWTTokens {
   accessToken: string;
   refreshToken: string;
 }
 
-interface IVKCredentials {
+interface IVKAuthCredentials {
   accessToken: string;
   userId: number;
 }
@@ -36,6 +36,11 @@ interface IVKConfig {
   ACCESS_TOKEN_URL: string;
   CLIENT_ID: string;
   CLIENT_SECRET: string;
+  CLIENT_SERVICE_SECRET: string;
+}
+
+interface IVKUser {
+  id: number;
 }
 
 export default class AuthService {
@@ -50,7 +55,7 @@ export default class AuthService {
     private readonly _vkConfig: IVKConfig
   ) {}
 
-  async signup(userData: IUserSaveData): Promise<IJWTTokens> {
+  async signUp(userData: IUserSaveData): Promise<IJWTTokens> {
     userData.password = this._crypto
       .pbkdf2Sync(
         userData.password,
@@ -87,20 +92,34 @@ export default class AuthService {
     };
   }
 
-  async authWithVK(
+  async getVKUserCredentials(
     vkCode: string,
     redirectUriAfterVKAuth: string
-  ): Promise<false | IVKCredentials> {
+  ): Promise<IVKAuthCredentials> {
     const { data } = await this._axios.get(
       `${this._vkConfig.ACCESS_TOKEN_URL}?client_id=${this._vkConfig.CLIENT_ID}&client_secret=${this._vkConfig.CLIENT_SECRET}&redirect_uri=${redirectUriAfterVKAuth}&code=${vkCode}`
     );
 
-    const user = await this._usersMySQLRepository.findWithVKId(data.userId);
+    return { accessToken: data.access_token, userId: data.userId };
+  }
 
-    if (!user) {
+  async findUserWithVKId(vkId: number): Promise<IUser> {
+    return await this._usersMySQLRepository.findWithVKId(vkId);
+  }
+
+  async validVKUser(accessToken, vkUserId): Promise<boolean> {
+    const { data } = await this._axios.get(
+      "https://api.vk.com/method/users.get?v=5.131&access_token=" + accessToken
+    );
+
+    if (data.error) {
       return false;
     }
 
-    return { accessToken: data.access_token, userId: data.userId };
+    if (vkUserId !== data.response[0].id) {
+      return false;
+    }
+
+    return true;
   }
 }

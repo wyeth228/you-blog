@@ -1,19 +1,17 @@
 import { Buffer } from "buffer";
 import * as express from "express";
 import * as Crypto from "crypto";
+import { FilterXSS } from "xss";
+import { Connection } from "mysql2/promise";
+import Axios from "axios";
 
 import AuthConrtoller from "../controllers/AuthController";
 import AuthService from "../services/AuthService";
 import { UsersMySQLRepository } from "../repositories/UsersMySQLRepository";
 import ValidUserCredentials from "../helpers/ValidUserCredentials";
-import ApiResponseHandler from "../helpers/ApiResponseHandler";
-import StringFilters from "../helpers/StringFilters";
+import { ApiResponseHandler } from "../helpers/ApiResponseHandler";
 import JWTToken from "../helpers/JWTToken";
 import Base64 from "../helpers/Base64";
-
-import xss from "xss";
-import { Connection } from "mysql2/promise";
-import Axios from "axios";
 
 const getAuthRouter = (mySQLConnection: Connection): express.Router => {
   const router: express.Router = express.Router();
@@ -41,15 +39,16 @@ const getAuthRouter = (mySQLConnection: Connection): express.Router => {
         ACCESS_TOKEN_URL: process.env.VK_ACCESS_TOKEN_URL,
         CLIENT_ID: process.env.VK_CLIENT_ID,
         CLIENT_SECRET: process.env.VK_CLIENT_SECRET,
+        CLIENT_SERVICE_SECRET: process.env.CLIENT_SERVICE_SECRET,
       }
     ),
     new ValidUserCredentials(),
     new ApiResponseHandler(),
-    new StringFilters(xss)
+    new FilterXSS()
   );
 
-  router.post("/signin", authController.signin.bind(authController));
-  router.post("/signup", authController.signup.bind(authController));
+  router.post("/signin", authController.signIn.bind(authController));
+  router.post("/signup", authController.signUp.bind(authController));
   router.post("/vk", authController.authWithVK.bind(authController));
   router.post("/google", authController.authWithGoogle.bind(authController));
 
