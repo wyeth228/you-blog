@@ -1,58 +1,46 @@
 import * as Crypto from "crypto";
-import Axios from "axios";
+import { FilterXSS } from "xss";
 
 import {
   IUserSaveData,
   IUser,
   UsersMySQLRepository,
 } from "../repositories/UsersMySQLRepository";
+import ValidUserCredentials from "../helpers/ValidUserCredentials";
 import JWTToken from "../helpers/JWTToken";
+import { ApiErrorTypes } from "../helpers/ApiResponseHandler";
+import { IVKUserAccessData, VKOAuth } from "../helpers/VKOAuth";
 
 interface IJWTTokens {
   accessToken: string;
   refreshToken: string;
 }
 
-interface IVKAuthCredentials {
-  accessToken: string;
-  userId: number;
-}
-
-interface IPasswordEncodeConfig {
+export interface IPasswordEncodeConfig {
   SALT: string;
   ITERATIONS: number;
   KEYLEN: number;
   ALG: string;
 }
 
-interface IJWTConfig {
+export interface IJWTConfig {
   ISS: string;
   ACCESS_TIME: number;
   REFRESH_TIME: number;
   SECRET: string;
 }
 
-interface IVKConfig {
-  ACCESS_TOKEN_URL: string;
-  CLIENT_ID: string;
-  CLIENT_SECRET: string;
-  CLIENT_SERVICE_SECRET: string;
-}
-
-interface IVKUser {
-  id: number;
-}
-
-export default class AuthService {
+export class AuthService {
   constructor(
     private readonly _usersMySQLRepository: UsersMySQLRepository,
+    private readonly _validUserCredentials: ValidUserCredentials,
+    private readonly _filterXSS: FilterXSS,
     private readonly _crypto: typeof Crypto,
     private readonly _jwtToken: JWTToken,
-    private readonly _axios: typeof Axios,
+    private readonly _vkOAuth: VKOAuth,
 
     private readonly _passwordEncodeConfig: IPasswordEncodeConfig,
-    private readonly _jwtConfig: IJWTConfig,
-    private readonly _vkConfig: IVKConfig
+    private readonly _jwtConfig: IJWTConfig
   ) {}
 
   async signUp(userData: IUserSaveData): Promise<IJWTTokens> {
@@ -92,15 +80,11 @@ export default class AuthService {
     };
   }
 
-  async getVKUserCredentials(
+  async getVKUserAccessData(
     vkCode: string,
-    redirectUriAfterVKAuth: string
-  ): Promise<IVKAuthCredentials> {
-    const { data } = await this._axios.get(
-      `${this._vkConfig.ACCESS_TOKEN_URL}?client_id=${this._vkConfig.CLIENT_ID}&client_secret=${this._vkConfig.CLIENT_SECRET}&redirect_uri=${redirectUriAfterVKAuth}&code=${vkCode}`
-    );
-
-    return { accessToken: data.access_token, userId: data.userId };
+    redirectUrl: string
+  ): Promise<IVKUserAccessData> {
+    return this._vkOAuth.getVKUserAccessData(vkCode, redirectUrl);
   }
 
   async findUserWithVKId(vkId: number): Promise<IUser> {
@@ -108,18 +92,28 @@ export default class AuthService {
   }
 
   async validVKUser(accessToken, vkUserId): Promise<boolean> {
-    const { data } = await this._axios.get(
-      "https://api.vk.com/method/users.get?v=5.131&access_token=" + accessToken
-    );
+    return await this._vkOAuth.validVKUser(accessToken, vkUserId);
+  }
 
-    if (data.error) {
-      return false;
+  userCredentialsIsNotValid(
+    email: string,
+    username: string,
+    password: string
+  ): { errorType: ApiErrorTypes } | false {
+    if (!this._validUserCredentials.email(email)) {
+      return { errorType: "email-invalid" };
     }
 
-    if (vkUserId !== data.response[0].id) {
-      return false;
+    if (
+      !this._validUserCredentials.username(this._filterXSS.process(username))
+    ) {
+      return { errorType: "username-invalid" };
     }
 
-    return true;
+    if (!this._validUserCredentials.password(password)) {
+      return { errorType: "password-invalid" };
+    }
+
+    return false;
   }
 }

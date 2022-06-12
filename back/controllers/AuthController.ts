@@ -1,25 +1,35 @@
 import { Request, Response } from "express";
-import { FilterXSS } from "xss";
 
-import AuthService from "../services/AuthService";
-import ValidUserCredentials from "../helpers/ValidUserCredentials";
-import {
-  ApiErrorTypes,
-  ApiResponseHandler,
-} from "../helpers/ApiResponseHandler";
+import { AuthService } from "../services/AuthService";
+import { ApiResponseHandler } from "../helpers/ApiResponseHandler";
 
 export default class AuthController {
   constructor(
     private readonly _authService: AuthService,
-    private readonly _validUserCredentials: ValidUserCredentials,
-    private readonly _apiResponseHandler: ApiResponseHandler,
-    private readonly _filterXSS: FilterXSS
+    private readonly _apiResponseHandler: ApiResponseHandler
   ) {}
 
   async signIn(req: Request, res: Response): Promise<void> {}
 
-  async signUp(req: Request, res: Response): Promise<void> {
-    const { type } = req.body;
+  async signUpHandler(req: Request, res: Response): Promise<void> {
+    const { email, username, password, type } = req.body;
+
+    const userCredentialsIsNotValid =
+      this._authService.userCredentialsIsNotValid(email, username, password);
+
+    if (userCredentialsIsNotValid) {
+      res
+        .status(400)
+        .json(
+          this._apiResponseHandler.genErrorData(
+            400,
+            userCredentialsIsNotValid.errorType,
+            "ru"
+          )
+        );
+
+      return;
+    }
 
     switch (type) {
       case "vk":
@@ -34,50 +44,46 @@ export default class AuthController {
     }
   }
 
-  userCredentialsIsNotValid(
-    email: string,
-    username: string,
-    password: string
-  ): { errorType: ApiErrorTypes } | false {
-    if (!this._validUserCredentials.email(email)) {
-      return { errorType: "email-invalid" };
-    }
-
-    if (
-      !this._validUserCredentials.username(this._filterXSS.process(username))
-    ) {
-      return { errorType: "username-invalid" };
-    }
-
-    if (!this._validUserCredentials.password(password)) {
-      return { errorType: "password-invalid" };
-    }
-
-    return false;
-  }
-
   async signUpWithVK(req: Request, res: Response): Promise<void> {
     const { email, username, password } = req.body;
     const { access_token, user_id } = req.cookies;
 
-    const userCredentialsIsNotValid = this.userCredentialsIsNotValid(
-      email,
-      username,
-      password
-    );
-
-    if (userCredentialsIsNotValid) {
-      res
-        .status(400)
-        .send(
-          this._apiResponseHandler.genErrorData(
-            400,
-            userCredentialsIsNotValid.errorType,
-            "ru"
-          )
-        );
+    if (!this._authService.validVKUser(access_token, user_id)) {
+      res.status(400).json();
 
       return;
+    }
+
+    try {
+      const { accessToken, refreshToken } = await this._authService.signUp({
+        email,
+        username,
+        password,
+      });
+
+      res.cookie("auth_type", "simple", {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+      });
+      res.cookie("access_token", accessToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+      });
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: false,
+      });
+
+      res.status(201).end();
+    } catch (e: any) {
+      console.error(e);
+
+      res
+        .status(500)
+        .json(this._apiResponseHandler.genErrorData(500, "server-error", "ru"));
     }
   }
 
@@ -85,26 +91,6 @@ export default class AuthController {
 
   async signUpSimple(req: Request, res: Response): Promise<void> {
     const { email, username, password } = req.body;
-
-    const userCredentialsIsNotValid = this.userCredentialsIsNotValid(
-      email,
-      username,
-      password
-    );
-
-    if (userCredentialsIsNotValid) {
-      res
-        .status(400)
-        .send(
-          this._apiResponseHandler.genErrorData(
-            400,
-            userCredentialsIsNotValid.errorType,
-            "ru"
-          )
-        );
-
-      return;
-    }
 
     try {
       const { accessToken, refreshToken } = await this._authService.signUp({
@@ -156,21 +142,21 @@ export default class AuthController {
     }
 
     try {
-      const vkUserCredentials = await this._authService.getVKUserCredentials(
+      const vkUserAccessData = await this._authService.getVKUserAccessData(
         vk_code,
         redirect_url_after_vk_auth
       );
 
       const user = await this._authService.findUserWithVKId(
-        vkUserCredentials.userId
+        vkUserAccessData.userId
       );
 
-      res.cookie("access_token", vkUserCredentials.accessToken, {
+      res.cookie("access_token", vkUserAccessData.accessToken, {
         httpOnly: true,
         sameSite: "strict",
         secure: false,
       });
-      res.cookie("user_id", vkUserCredentials.userId, {
+      res.cookie("user_id", vkUserAccessData.userId, {
         httpOnly: true,
         sameSite: "strict",
         secure: false,
