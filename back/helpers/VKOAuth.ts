@@ -6,10 +6,8 @@ export interface IVKUserAccessData {
 }
 
 export interface IVKConfig {
-  ACCESS_TOKEN_URL: string;
   CLIENT_ID: string;
   CLIENT_SECRET: string;
-  CLIENT_SERVICE_SECRET: string;
 }
 
 export class VKOAuth {
@@ -23,7 +21,7 @@ export class VKOAuth {
     redirectUrl: string
   ): Promise<IVKUserAccessData> {
     const { data } = await this._axios.get(
-      `${this._vkConfig.ACCESS_TOKEN_URL}?client_id=${this._vkConfig.CLIENT_ID}&client_secret=${this._vkConfig.CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${vkCode}`
+      `https://oauth.vk.com/access_token?client_id=${this._vkConfig.CLIENT_ID}&client_secret=${this._vkConfig.CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${vkCode}`
     );
 
     return { accessToken: data.access_token, userId: data.userId };

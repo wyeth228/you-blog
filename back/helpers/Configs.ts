@@ -1,11 +1,11 @@
+require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
+
 import { IJWTConfig, IPasswordEncodeConfig } from "../services/AuthService";
 import { IVKConfig } from "./VKOAuth";
 
 export const VK_CONFIG: IVKConfig = {
-  ACCESS_TOKEN_URL: process.env.VK_ACCESS_TOKEN_URL,
   CLIENT_ID: process.env.VK_CLIENT_ID,
   CLIENT_SECRET: process.env.VK_CLIENT_SECRET,
-  CLIENT_SERVICE_SECRET: process.env.CLIENT_SERVICE_SECRET,
 };
 
 export const PASSWORD_ENCODE_CONFIG: IPasswordEncodeConfig = {

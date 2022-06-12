@@ -37,7 +37,7 @@ const getAuthRouter = (mySQLConnection: Connection): express.Router => {
     new ApiResponseHandler()
   );
 
-  router.post("/signin", authController.signIn.bind(authController));
+  router.post("/signin", authController.signInHandler.bind(authController));
   router.post("/signup", authController.signUpHandler.bind(authController));
   router.post("/vk", authController.authWithVK.bind(authController));
   router.post("/google", authController.authWithGoogle.bind(authController));

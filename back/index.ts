@@ -1,8 +1,8 @@
-import getAuthRouter from "./routes/AuthRouter";
-
 import * as express from "express";
 import * as mysql2 from "mysql2/promise";
 import * as cookieParser from "cookie-parser";
+
+import getAuthRouter from "./routes/AuthRouter";
 
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
 

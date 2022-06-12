@@ -43,23 +43,25 @@ export class AuthService {
     private readonly _jwtConfig: IJWTConfig
   ) {}
 
-  async signUp(userData: IUserSaveData): Promise<IJWTTokens> {
-    userData.password = this._crypto
-      .pbkdf2Sync(
-        userData.password,
-        this._passwordEncodeConfig.SALT,
-        this._passwordEncodeConfig.ITERATIONS,
-        this._passwordEncodeConfig.KEYLEN,
-        this._passwordEncodeConfig.ALG
-      )
-      .toString("hex");
-
-    const userId: number = await this._usersMySQLRepository.save({
+  async saveUser(userData: IUserSaveData): Promise<IUser> {
+    return await this._usersMySQLRepository.save({
       email: userData.email,
       username: userData.username,
-      password: userData.password,
+      password: this._crypto
+        .pbkdf2Sync(
+          userData.password,
+          this._passwordEncodeConfig.SALT,
+          this._passwordEncodeConfig.ITERATIONS,
+          this._passwordEncodeConfig.KEYLEN,
+          this._passwordEncodeConfig.ALG
+        )
+        .toString("hex"),
+      vkId: 0,
+      googleId: "",
     });
+  }
 
+  genJWTTokens(userId: number): IJWTTokens {
     return {
       accessToken: this._jwtToken.create(
         {
@@ -82,9 +84,9 @@ export class AuthService {
 
   async getVKUserAccessData(
     vkCode: string,
-    redirectUrl: string
+    vkRedirectUrl: string
   ): Promise<IVKUserAccessData> {
-    return this._vkOAuth.getVKUserAccessData(vkCode, redirectUrl);
+    return this._vkOAuth.getVKUserAccessData(vkCode, vkRedirectUrl);
   }
 
   async findUserWithVKId(vkId: number): Promise<IUser> {

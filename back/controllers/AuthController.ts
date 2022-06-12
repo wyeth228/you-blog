@@ -9,7 +9,7 @@ export default class AuthController {
     private readonly _apiResponseHandler: ApiResponseHandler
   ) {}
 
-  async signIn(req: Request, res: Response): Promise<void> {}
+  async signInHandler(req: Request, res: Response): Promise<void> {}
 
   async signUpHandler(req: Request, res: Response): Promise<void> {
     const { email, username, password, type } = req.body;
@@ -48,30 +48,30 @@ export default class AuthController {
     const { email, username, password } = req.body;
     const { access_token, user_id } = req.cookies;
 
-    if (!this._authService.validVKUser(access_token, user_id)) {
-      res.status(400).json();
-
-      return;
-    }
-
     try {
-      const { accessToken, refreshToken } = await this._authService.signUp({
+      if (!this._authService.validVKUser(access_token, user_id)) {
+        res
+          .status(400)
+          .json(
+            this._apiResponseHandler.genErrorData(
+              400,
+              "wrong-credentials",
+              "ru"
+            )
+          );
+
+        return;
+      }
+
+      await this._authService.saveUser({
         email,
         username,
         password,
+        vkId: 0,
+        googleId: "",
       });
 
-      res.cookie("auth_type", "simple", {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: false,
-      });
-      res.cookie("access_token", accessToken, {
-        httpOnly: true,
-        sameSite: "strict",
-        secure: false,
-      });
-      res.cookie("refresh_token", refreshToken, {
+      res.cookie("auth_type", "vk", {
         httpOnly: true,
         sameSite: "strict",
         secure: false,
@@ -93,11 +93,17 @@ export default class AuthController {
     const { email, username, password } = req.body;
 
     try {
-      const { accessToken, refreshToken } = await this._authService.signUp({
+      const newUser = await this._authService.saveUser({
         email,
         username,
         password,
+        vkId: 0,
+        googleId: "",
       });
+
+      const { accessToken, refreshToken } = this._authService.genJWTTokens(
+        newUser.id
+      );
 
       res.cookie("auth_type", "simple", {
         httpOnly: true,
@@ -126,7 +132,17 @@ export default class AuthController {
   }
 
   async authWithVK(req: Request, res: Response): Promise<void> {
-    const { vk_code, redirect_url_after_vk_auth } = req.body;
+    const { vk_code, vk_redirect_url } = req.body;
+
+    if (!vk_redirect_url) {
+      res
+        .status(400)
+        .send(
+          this._apiResponseHandler.genErrorData(400, "wrong-credentials", "ru")
+        );
+
+      return;
+    }
 
     if (!vk_code) {
       res
@@ -134,7 +150,7 @@ export default class AuthController {
         .json(
           this._apiResponseHandler.genRedirectData(
             302,
-            `https://oauth.vk.com/authorize?client_id=${process.env.VK_CLIENT_ID}&redirect_uri=${redirect_url_after_vk_auth}&display=mobile&scope=offline&response_type=code`
+            `https://oauth.vk.com/authorize?client_id=${process.env.VK_CLIENT_ID}&redirect_uri=${vk_redirect_url}&display=mobile&scope=offline&response_type=code`
           )
         );
 
@@ -144,7 +160,7 @@ export default class AuthController {
     try {
       const vkUserAccessData = await this._authService.getVKUserAccessData(
         vk_code,
-        redirect_url_after_vk_auth
+        vk_redirect_url
       );
 
       const user = await this._authService.findUserWithVKId(
