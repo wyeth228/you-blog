@@ -1,72 +1,56 @@
 <template>
-  <main class="w-full max-w-screen-sm">
+  <main class="w-full max-w-lg">
     <!-- Форма регистрации  -->
-    <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-6">
-      <h1 class="text-4xl text-center mb-6">Зарегистрироваться</h1>
 
-      <div class="mb-3">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="username"
-        >
-          E-mail
-        </label>
+    <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-16">
+      <auth-logo />
+
+      <auth-social class="mb-6" />
+
+      <auth-or-section class="mb-6" />
+
+      <div class="mb-4 opacity-40">
+        Введите ваши данные, чтобы зарегистрироваться
+      </div>
+      <div class="mb-4">
         <input
           v-model="email"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="email"
-          placeholder="box@email.su"
+          placeholder="E-mail"
         />
         <p class="hidden text-red-500 text-xs italic">Введите e-mail</p>
       </div>
-      <div class="mb-3">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="password"
-        >
-          Никнейм
-        </label>
+      <div class="mb-4">
         <input
           v-model="username"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
-          placeholder="Ник228"
+          placeholder="Никнейм"
         />
         <p class="hidden text-red-500 text-xs italic">Введите никнейм</p>
       </div>
-      <div class="mb-3">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="password"
-        >
-          Пароль
-        </label>
+      <div class="mb-4">
         <input
           v-model="password"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
-          placeholder="******************"
+          placeholder="Пароль"
         />
         <p class="hidden text-red-500 text-xs italic">Введите пароль</p>
       </div>
       <div class="mb-5">
-        <label
-          class="block text-gray-700 text-sm font-bold mb-2"
-          for="password"
-        >
-          Введите пароль еще раз
-        </label>
         <input
           v-model="password2"
           class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
-          placeholder="******************"
+          placeholder="Введите пароль еще раз"
         />
         <p class="hidden text-red-500 text-xs italic">Введите пароль</p>
       </div>
       <div class="flex items-center justify-between">
         <button
-          class="bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          class="w-full bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
           :disabled="{ formValid }"
         >
