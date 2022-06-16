@@ -1,8 +1,8 @@
 <template>
   <main class="w-full max-w-lg">
     <!-- Форма входа  -->
-    <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-16">
-      <auth-logo />
+    <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-14">
+      <auth-logo class="mb-14" />
 
       <auth-social class="mb-6" />
 
@@ -45,7 +45,7 @@
     <article class="w-full max-w-screen-sm shadow-md p-6 text-center mt-2">
       <span>Нет аккаунта?</span>
       <nuxt-link
-        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-400"
+        class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-500"
         to="/auth/signup"
       >
         Зарегистрируйтесь

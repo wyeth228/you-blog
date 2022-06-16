@@ -2,8 +2,8 @@
   <main class="w-full max-w-lg">
     <!-- Форма регистрации  -->
 
-    <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-16">
-      <auth-logo />
+    <form class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-14">
+      <auth-logo class="mb-14" />
 
       <auth-social class="mb-6" />
 
@@ -52,7 +52,6 @@
         <button
           class="w-full bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           type="submit"
-          :disabled="{ formValid }"
         >
           Регистрация
         </button>

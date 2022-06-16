@@ -1,36 +1,35 @@
 <template>
   <div class="flex items-center">
-    <span>Войти с помощью</span>
-    <auth-social-wrapper>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="22px"
-        height="22px"
-        viewBox="0 0 20 20"
-      >
-        <path
-          d="M17.802 12.298s1.617 1.597 2.017 2.336a.127.127 0 0 1 .018.035c.163.273.203.487.123.645-.135.261-.592.392-.747.403h-2.858c-.199 0-.613-.052-1.117-.4-.385-.269-.768-.712-1.139-1.145-.554-.643-1.033-1.201-1.518-1.201a.548.548 0 0 0-.18.03c-.367.116-.833.639-.833 2.032 0 .436-.344.684-.585.684H9.674c-.446 0-2.768-.156-4.827-2.327C2.324 10.732.058 5.4.036 5.353c-.141-.345.155-.533.475-.533h2.886c.387 0 .513.234.601.444.102.241.48 1.205 1.1 2.288 1.004 1.762 1.621 2.479 2.114 2.479a.527.527 0 0 0 .264-.07c.644-.354.524-2.654.494-3.128 0-.092-.001-1.027-.331-1.479-.236-.324-.638-.45-.881-.496.065-.094.203-.238.38-.323.441-.22 1.238-.252 2.029-.252h.439c.858.012 1.08.067 1.392.146.628.15.64.557.585 1.943-.016.396-.033.842-.033 1.367 0 .112-.005.237-.005.364-.019.711-.044 1.512.458 1.841a.41.41 0 0 0 .217.062c.174 0 .695 0 2.108-2.425.62-1.071 1.1-2.334 1.133-2.429.028-.053.112-.202.214-.262a.479.479 0 0 1 .236-.056h3.395c.37 0 .621.056.67.196.082.227-.016.92-1.566 3.016-.261.349-.49.651-.691.915-1.405 1.844-1.405 1.937.083 3.337z"
-        />
-      </svg>
-    </auth-social-wrapper>
-    <auth-social-wrapper>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        width="22px"
-        height="22px"
-        viewBox="0 0 24 24"
-        version="1.1"
-      >
-        <g id="brand" stroke="none" stroke-width="1" fill-rule="evenodd">
-          <g id="google" fill-rule="nonzero">
-            <path
-              d="M11.99,13.9 L11.99,10.18 L21.35,10.18 C21.49,10.81 21.6,11.4 21.6,12.23 C21.6,17.94 17.77,22 12,22 C6.48,22 2,17.52 2,12 C2,6.48 6.48,2 12,2 C14.7,2 16.96,2.99 18.69,4.61 L15.85,7.37 C15.13,6.69 13.87,5.89 12,5.89 C8.69,5.89 5.99,8.64 5.99,12.01 C5.99,15.38 8.69,18.13 12,18.13 C15.83,18.13 17.24,15.48 17.5,13.91 L11.99,13.91 L11.99,13.9 Z"
-              id="Shape"
-            />
-          </g>
-        </g>
-      </svg>
+    <span class="opacity-60">Войти с помощью</span>
+    <auth-social-wrapper v-for="(social, idx) of socials" :key="idx">
+      <component :is="social.svgName"></component>
     </auth-social-wrapper>
   </div>
 </template>
+
+<script lang="ts">
+import Vue from "vue";
+
+import VkSvg from "@/assets/img/socials/vk.svg";
+import GoogleSvg from "@/assets/img/socials/google.svg";
+
+export default Vue.extend({
+  components: {
+    VkSvg,
+    GoogleSvg,
+  },
+
+  data: () => ({
+    socials: [
+      {
+        path: "http://localhost:3000/auth/vk",
+        svgName: "vkSvg",
+      },
+      {
+        path: "http://localhost:3000/auth/google",
+        svgName: "googleSvg",
+      },
+    ],
+  }),
+});
+</script>
