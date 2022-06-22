@@ -21,7 +21,11 @@ import {
 
 const getAuthRouter = (mySQLConnection: Connection): express.Router => {
   const router: express.Router = express.Router();
-  const jwtToken: JWTToken = new JWTToken(Crypto, new Base64(Buffer));
+  const jwtToken: JWTToken = new JWTToken(
+    JWT_CONFIG,
+    Crypto,
+    new Base64(Buffer)
+  );
 
   const authController: AuthConrtoller = new AuthConrtoller(
     new AuthService(
@@ -32,7 +36,8 @@ const getAuthRouter = (mySQLConnection: Connection): express.Router => {
       jwtToken,
       new VKOAuth(VK_CONFIG, Axios),
       PASSWORD_ENCODE_CONFIG,
-      JWT_CONFIG
+      86400000,
+      172800000
     ),
     new ApiResponseHandler()
   );

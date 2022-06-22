@@ -24,7 +24,7 @@ export class VKOAuth {
       `https://oauth.vk.com/access_token?client_id=${this._vkConfig.CLIENT_ID}&client_secret=${this._vkConfig.CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${vkCode}`
     );
 
-    return { accessToken: data.access_token, userId: data.userId };
+    return { accessToken: data.access_token, userId: data.user_id };
   }
 
   async validVKUser(accessToken: string, vkUserId: number): Promise<boolean> {

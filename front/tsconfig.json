@@ -18,5 +18,6 @@
     },
     "types": ["@nuxt/types", "@types/node"]
   },
+  "include": ["declarations"],
   "exclude": ["node_modules", ".nuxt", "dist"]
 }

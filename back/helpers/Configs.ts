@@ -1,7 +1,8 @@
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
 
-import { IJWTConfig, IPasswordEncodeConfig } from "../services/AuthService";
+import { IPasswordEncodeConfig } from "../services/AuthService";
 import { IVKConfig } from "./VKOAuth";
+import { IJWTConfig } from "./JWTToken";
 
 export const VK_CONFIG: IVKConfig = {
   CLIENT_ID: process.env.VK_CLIENT_ID,
@@ -17,7 +18,5 @@ export const PASSWORD_ENCODE_CONFIG: IPasswordEncodeConfig = {
 
 export const JWT_CONFIG: IJWTConfig = {
   ISS: process.env.JWT_ISS,
-  ACCESS_TIME: Number(process.env.JWT_ACCESS_TIME),
-  REFRESH_TIME: Number(process.env.JWT_REFRESH_TIME),
   SECRET: process.env.JWT_SECRET,
 };

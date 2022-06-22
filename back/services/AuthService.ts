@@ -23,13 +23,6 @@ export interface IPasswordEncodeConfig {
   ALG: string;
 }
 
-export interface IJWTConfig {
-  ISS: string;
-  ACCESS_TIME: number;
-  REFRESH_TIME: number;
-  SECRET: string;
-}
-
 export class AuthService {
   constructor(
     private readonly _usersMySQLRepository: UsersMySQLRepository,
@@ -38,9 +31,9 @@ export class AuthService {
     private readonly _crypto: typeof Crypto,
     private readonly _jwtToken: JWTToken,
     private readonly _vkOAuth: VKOAuth,
-
     private readonly _passwordEncodeConfig: IPasswordEncodeConfig,
-    private readonly _jwtConfig: IJWTConfig
+    private readonly JWT_ACCESS_TIME: number,
+    private readonly JWT_REFRESH_TIME: number
   ) {}
 
   async saveUser(userData: IUserSaveData): Promise<IUser> {
@@ -63,22 +56,14 @@ export class AuthService {
 
   genJWTTokens(userId: number): IJWTTokens {
     return {
-      accessToken: this._jwtToken.create(
-        {
-          iss: this._jwtConfig.ISS,
-          exp: Date.now() + this._jwtConfig.ACCESS_TIME,
-          userId: userId,
-        },
-        this._jwtConfig.SECRET
-      ),
-      refreshToken: this._jwtToken.create(
-        {
-          iss: this._jwtConfig.ISS,
-          exp: Date.now() + this._jwtConfig.REFRESH_TIME,
-          userId: userId,
-        },
-        this._jwtConfig.SECRET
-      ),
+      accessToken: this._jwtToken.create({
+        exp: Date.now() + this.JWT_ACCESS_TIME,
+        userId: userId,
+      }),
+      refreshToken: this._jwtToken.create({
+        exp: Date.now() + this.JWT_REFRESH_TIME,
+        userId: userId,
+      }),
     };
   }
 
@@ -93,7 +78,7 @@ export class AuthService {
     return await this._usersMySQLRepository.findWithVKId(vkId);
   }
 
-  async validVKUser(accessToken, vkUserId): Promise<boolean> {
+  async validVKUser(accessToken: string, vkUserId: number): Promise<boolean> {
     return await this._vkOAuth.validVKUser(accessToken, vkUserId);
   }
 

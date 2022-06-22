@@ -3,13 +3,18 @@ import * as Crypto from "crypto";
 import Base64 from "./Base64";
 
 interface IJWTPayload {
-  iss: string;
   exp: number;
   userId: number;
 }
 
+export interface IJWTConfig {
+  ISS: string;
+  SECRET: string;
+}
+
 export default class JWTToken {
   constructor(
+    private readonly _jwtConfig: IJWTConfig,
     private readonly _crypto: typeof Crypto,
     private readonly _base64: Base64
   ) {}
@@ -47,26 +52,37 @@ export default class JWTToken {
         return false;
       }
     } catch (e: any) {
+      console.log(e);
+
       return false;
     }
 
     return true;
   }
 
-  create(payload: IJWTPayload, secret: string): string {
+  create(jwtPayload: IJWTPayload): string {
     const header = JSON.stringify({
       alg: "HS256",
       typ: "JWT",
     });
 
-    const stringPayload = JSON.stringify(payload);
+    const newPayload = {
+      iss: this._jwtConfig.ISS,
+      exp: jwtPayload.exp,
+      userId: jwtPayload.userId,
+    };
+
+    const stringPayload = JSON.stringify(newPayload);
 
     const unsignedToken: string =
       this._base64.encodeUrl(header) +
       "." +
       this._base64.encodeUrl(stringPayload);
 
-    const signature: string = this.createSignature(unsignedToken, secret);
+    const signature: string = this.createSignature(
+      unsignedToken,
+      this._jwtConfig.SECRET
+    );
 
     return (
       this._base64.encodeUrl(header) +
