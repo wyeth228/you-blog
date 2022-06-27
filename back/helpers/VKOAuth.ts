@@ -16,15 +16,19 @@ export class VKOAuth {
     private readonly _axios: Axios
   ) {}
 
-  async getVKUserAccessData(
+  async getUserAccessData(
     vkCode: string,
     redirectUrl: string
-  ): Promise<IVKUserAccessData> {
+  ): Promise<IVKUserAccessData | false> {
     const { data } = await this._axios.get(
       `https://oauth.vk.com/access_token?client_id=${this._vkConfig.CLIENT_ID}&client_secret=${this._vkConfig.CLIENT_SECRET}&redirect_uri=${redirectUrl}&code=${vkCode}`
     );
 
-    return { accessToken: data.access_token, userId: data.user_id };
+    if (data.access_token && data.user_id) {
+      return { accessToken: data.access_token, userId: data.user_id };
+    } else {
+      return false;
+    }
   }
 
   async validVKUser(accessToken: string, vkUserId: number): Promise<boolean> {

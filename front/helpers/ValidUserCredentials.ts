@@ -1,8 +1,4 @@
-import { FilterXSS } from "xss";
-
-export default class ValidUserCredentials {
-  constructor(private readonly _filterXSS: FilterXSS) {}
-
+const ValidUserCredentials = {
   email(email: any): boolean {
     if (typeof email !== "string") {
       return false;
@@ -17,21 +13,19 @@ export default class ValidUserCredentials {
     }
 
     return true;
-  }
+  },
 
   username(username: any): boolean {
     if (typeof username !== "string") {
       return false;
     }
 
-    username = this._filterXSS.process(username);
-
     if (!/^[А-Яа-яA-Za-z0-9_-]{3,16}$/.test(username)) {
       return false;
     }
 
     return true;
-  }
+  },
 
   password(password: any): boolean {
     if (typeof password !== "string") {
@@ -43,5 +37,7 @@ export default class ValidUserCredentials {
     }
 
     return true;
-  }
-}
+  },
+};
+
+export default ValidUserCredentials;

@@ -1,23 +1,7 @@
 import { Connection, ResultSetHeader } from "mysql2/promise";
 
 import MySQLRepository from "./MySQLRepository";
-
-export interface IUserSaveData {
-  email: string;
-  username: string;
-  password: string;
-  vkId: number;
-  googleId: string;
-}
-
-export interface IUser {
-  id: number;
-  email: string;
-  username: string;
-  password: string;
-  vk_id: number;
-  google_id: string;
-}
+import { IUser, IUserSaveData } from "../services/UsersService";
 
 export class UsersMySQLRepository extends MySQLRepository {
   constructor(mysqlConnection: Connection) {
@@ -40,12 +24,30 @@ export class UsersMySQLRepository extends MySQLRepository {
     };
   }
 
-  async findWithVKId(vkId: number): Promise<IUser> {
+  async findWithVKId(vkId: number): Promise<IUser | false> {
     const [rows] = await this._connection.query<ResultSetHeader>(
       "SELECT * FROM users WHERE vk_id = ?",
       [vkId]
     );
 
-    return rows[0];
+    return rows[0] || false;
+  }
+
+  async findWithGoogleId(googleId: number): Promise<IUser | false> {
+    const [rows] = await this._connection.query<ResultSetHeader>(
+      "SELECT * FROM users WHERE google_id = ?",
+      [googleId]
+    );
+
+    return rows[0] || false;
+  }
+
+  async findWithEmail(email: string): Promise<IUser | false> {
+    const [rows] = await this._connection.query<ResultSetHeader>(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+
+    return rows[0] || false;
   }
 }

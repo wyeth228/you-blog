@@ -1,7 +1,6 @@
 <template>
   <main class="w-full max-w-lg">
-    <!-- Форма входа  -->
-    <div class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-14">
+    <div class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-12">
       <auth-logo class="mb-14" />
 
       <auth-with-socials class="mb-6" />
@@ -43,7 +42,6 @@
       </form>
     </div>
 
-    <!-- Уже есть аккаунт? -->
     <section class="w-full max-w-screen-sm shadow-md p-6 text-center mt-2">
       <span>Нет аккаунта?</span>
       <nuxt-link
@@ -57,9 +55,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
   layout: "auth",
-});
+};
 </script>

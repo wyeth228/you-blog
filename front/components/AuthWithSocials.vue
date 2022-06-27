@@ -14,20 +14,20 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-
 import VkSvg from "@/assets/img/socials/vk.svg";
 import GoogleSvg from "@/assets/img/socials/google.svg";
 
 import Config from "../helpers/Config";
 import AuthFetchClient from "../api/AuthFetchClient";
+import UserLocalStorageRepository from "../repositories/UserLocalStorageRepository";
 
 const authFetchClient = new AuthFetchClient(
   Config.API_URL,
+  Config.API_SIGNUP_PATH,
   Config.API_VK_AUTH_PATH
 );
 
-export default Vue.extend({
+export default {
   components: {
     VkSvg,
     GoogleSvg,
@@ -47,38 +47,16 @@ export default Vue.extend({
   }),
 
   async created(): Promise<void> {
-    const { redirect_url, code } = this.$route.query;
+    const { code } = this.$route.query;
 
-    if (!redirect_url || !code) {
-      return;
-    }
-
-    try {
-      const statusCode = await authFetchClient.authWithVK(
-        redirect_url + "?redirect_url=" + redirect_url,
-        code
-      );
-
-      if (statusCode === 404) {
-        this.$router.push({ path: "/auth/signup?type=vk" });
-
-        return;
-      }
-
-      if (statusCode === 201) {
-        this.$store.commit("user/setAuth", true);
-        this.$router.push("/");
-
-        return;
-      }
-    } catch (e: any) {
-      console.warn(e);
+    if (code) {
+      this.vkAuth(code);
     }
   },
 
   methods: {
-    handleSocialClick(e: Event, type: string): void {
-      switch (type) {
+    handleSocialClick(e: Event, authType: string): void {
+      switch (authType) {
         case "vk":
           this.vkAuth();
           break;
@@ -94,14 +72,26 @@ export default Vue.extend({
         const vkRedirectUrl = Config.APP_URL + Config.APP_VK_REDIRECT_PATH;
 
         const statusCode = await authFetchClient.authWithVK(
-          vkRedirectUrl + "?redirect_url=" + vkRedirectUrl,
+          vkRedirectUrl,
           vkCode
         );
+
+        if (statusCode === 404) {
+          return this.$router.push({ path: "/auth/signup?type=vk" });
+        }
+
+        if (statusCode === 204) {
+          this.$store.commit("user/setAuth", true);
+
+          UserLocalStorageRepository.setAuth(1);
+
+          this.$router.push("/");
+        }
       } catch (e: any) {
         console.warn(e);
       }
     },
     async googleAuth(): Promise<void> {},
   },
-});
+};
 </script>

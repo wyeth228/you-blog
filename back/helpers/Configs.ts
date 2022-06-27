@@ -1,12 +1,18 @@
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
 
-import { IPasswordEncodeConfig } from "../services/AuthService";
+import { IPasswordEncodeConfig } from "../services/AuthorizationService";
 import { IVKConfig } from "./VKOAuth";
 import { IJWTConfig } from "./JWTToken";
+import { IGoogleConfig } from "./GoogleOAuth";
 
 export const VK_CONFIG: IVKConfig = {
   CLIENT_ID: process.env.VK_CLIENT_ID,
   CLIENT_SECRET: process.env.VK_CLIENT_SECRET,
+};
+
+export const GOOGLE_CONFIG: IGoogleConfig = {
+  CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 };
 
 export const PASSWORD_ENCODE_CONFIG: IPasswordEncodeConfig = {
@@ -19,4 +25,6 @@ export const PASSWORD_ENCODE_CONFIG: IPasswordEncodeConfig = {
 export const JWT_CONFIG: IJWTConfig = {
   ISS: process.env.JWT_ISS,
   SECRET: process.env.JWT_SECRET,
+  ACCESS_TIME: Number(process.env.JWT_ACCESS_TIME),
+  REFRESH_TIME: Number(process.env.JWT_REFRESH_TIME),
 };

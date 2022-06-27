@@ -10,6 +10,7 @@
     "strict": true,
     "noEmit": true,
     "experimentalDecorators": true,
+    "alwaysStrict": true,
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {

@@ -3,16 +3,28 @@ import * as Crypto from "crypto";
 import Base64 from "./Base64";
 
 interface IJWTPayload {
+  iss: string;
   exp: number;
   userId: number;
+}
+
+interface IDataForPayload {
+  userId: number;
+}
+
+interface IJWTHeader {
+  alg: string;
+  typ: "JWT";
 }
 
 export interface IJWTConfig {
   ISS: string;
   SECRET: string;
+  ACCESS_TIME: number;
+  REFRESH_TIME: number;
 }
 
-export default class JWTToken {
+export class JWTToken {
   constructor(
     private readonly _jwtConfig: IJWTConfig,
     private readonly _crypto: typeof Crypto,
@@ -24,6 +36,21 @@ export default class JWTToken {
       .createHmac("sha256", secret, { encoding: "binary" })
       .update(unsignedToken)
       .digest("base64url");
+  }
+
+  private _getHeader(): IJWTHeader {
+    return {
+      alg: "HS256",
+      typ: "JWT",
+    };
+  }
+
+  private _getPayload(dataForPayload: IDataForPayload): IJWTPayload {
+    return {
+      iss: this._jwtConfig.ISS,
+      exp: Date.now() + this._jwtConfig.ACCESS_TIME,
+      userId: dataForPayload.userId,
+    };
   }
 
   valid(token: string, secret: string, iss: string): boolean {
@@ -60,22 +87,12 @@ export default class JWTToken {
     return true;
   }
 
-  create(jwtPayload: IJWTPayload): string {
-    const header = JSON.stringify({
-      alg: "HS256",
-      typ: "JWT",
-    });
-
-    const newPayload = {
-      iss: this._jwtConfig.ISS,
-      exp: jwtPayload.exp,
-      userId: jwtPayload.userId,
-    };
-
-    const stringPayload = JSON.stringify(newPayload);
+  create(dataForPayload: IDataForPayload, type: "access" | "refresh"): string {
+    const stringHeader = JSON.stringify(this._getHeader());
+    const stringPayload = JSON.stringify(this._getPayload(dataForPayload));
 
     const unsignedToken: string =
-      this._base64.encodeUrl(header) +
+      this._base64.encodeUrl(stringHeader) +
       "." +
       this._base64.encodeUrl(stringPayload);
 
@@ -85,7 +102,7 @@ export default class JWTToken {
     );
 
     return (
-      this._base64.encodeUrl(header) +
+      this._base64.encodeUrl(stringHeader) +
       "." +
       this._base64.encodeUrl(stringPayload) +
       "." +

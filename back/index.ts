@@ -3,7 +3,7 @@ import * as mysql2 from "mysql2/promise";
 import * as cookieParser from "cookie-parser";
 import * as cors from "cors";
 
-import getAuthRouter from "./routes/AuthRouter";
+import getAuthorizationRouter from "./routes/AuthorizationRouter";
 
 require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
 
@@ -23,7 +23,7 @@ async function startApplication() {
     password: process.env.MYSQL_PASSWORD,
   });
 
-  app.use("/auth", getAuthRouter(mySQLConnection));
+  app.use("/authorization", getAuthorizationRouter(mySQLConnection));
 
   app.listen(PORT, () => {
     console.log("Server listen on " + PORT + "...");

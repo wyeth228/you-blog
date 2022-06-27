@@ -6,13 +6,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-
 import LogoSvg from "@/assets/img/logo.svg";
 
-export default Vue.extend({
+export default {
   components: {
     LogoSvg,
   },
-});
+};
 </script>

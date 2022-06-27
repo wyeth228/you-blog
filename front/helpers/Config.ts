@@ -5,4 +5,5 @@ export default {
   API_URL: process.env.VUE_APP_API_URL,
   API_VK_AUTH_PATH: process.env.VUE_APP_API_VK_AUTH_PATH,
   API_GOOGLE_AUTH_PATH: process.env.VUE_APP_API_GOOGLE_AUTH_PATH,
+  API_SIGNUP_PATH: process.env.VUE_APP_API_SIGNUP_PATH,
 };

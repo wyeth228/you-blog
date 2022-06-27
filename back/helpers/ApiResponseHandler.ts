@@ -73,8 +73,36 @@ const apiErrorTranslations = createApiErrorTranslations({
     ru: "Пользователь не найден",
     en: "User not found",
   },
-  "wrong-credentials": {
-    ru: "Неправильные учетные данные",
-    en: "Wrong credentials",
+  "user-already-exists": {
+    ru: "Пользователь уже существует",
+    en: "The user already exists",
+  },
+  "wrong-vk-access-data": {
+    ru: "Неверные данные доступа ВКонтакте",
+    en: "Incorrect VKontakte access data",
+  },
+  "wrong-vk-redirect-url": {
+    ru: "Неправильный URL редиректа для ВКонтакте",
+    en: "Incorrect redirect URL for VKontakte",
+  },
+  "wrong-vk-code-or-url": {
+    ru: "Неправильные код или URL для ВКонтакте",
+    en: "Incorrect code or URL for VKontakte",
+  },
+  "wrong-google-access-data": {
+    ru: "Неверные данные доступа Google",
+    en: "Incorrect Google access data",
+  },
+  "wrong-google-redirect-url": {
+    ru: "Неправильный URL редиректа для Google",
+    en: "Incorrect redirect URL for Google",
+  },
+  "wrong-google-code-or-url": {
+    ru: "Неправильные код или URL для Google",
+    en: "Incorrect code or URL for Google",
+  },
+  "wrong-email-or-password": {
+    ru: "Неверная почта или пароль",
+    en: "Invalid email or password",
   },
 });
