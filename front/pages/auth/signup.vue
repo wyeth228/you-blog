@@ -8,7 +8,7 @@
       <auth-or-section class="mb-6" />
 
       <form>
-        <div class="mb-4 opacity-40">
+        <div class="mb-4 text-gray-400">
           Введите ваши данные, чтобы зарегистрироваться
         </div>
         <div class="mb-4">
@@ -62,6 +62,7 @@
         <div class="flex items-center justify-between">
           <button
             @click.prevent="signUp"
+            :disabled="buttonDisabled"
             class="w-full bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
           >
@@ -87,13 +88,15 @@
 import ValidUserCredentials from "../../helpers/ValidUserCredentials";
 import AuthFetchClient from "../../api/AuthFetchClient";
 import Config from "../../helpers/Config";
+import UserLocalStorageRepository from "../../repositories/UserLocalStorageRepository";
 
 const authFetchClient = new AuthFetchClient(
   Config.API_URL,
   Config.API_SIGNUP_PATH,
-  Config.API_VK_AUTH_PATH
+  Config.API_SIGNIN_PATH,
+  Config.API_VK_AUTH_PATH,
+  Config.API_GOOGLE_AUTH_PATH
 );
-
 export default {
   layout: "auth",
 
@@ -104,6 +107,8 @@ export default {
     username: "",
     password: "",
     password2: "",
+
+    buttonDisabled: false,
   }),
 
   methods: {
@@ -152,15 +157,34 @@ export default {
 
       return true;
     },
-    async signUp(e) {
+    async signUp(e): Promise<void> {
+      this.buttonDisabled = true;
+
       if (!this.allFieldsValid()) {
+        this.buttonDisabled = false;
+
         return;
       }
 
-      const statusCode = await authFetchClient.signUp(
+      const { statusCode, data } = await authFetchClient.signUp(
         { email: this.email, username: this.username, password: this.password },
         this.$route.query.type
       );
+
+      if (statusCode === 204) {
+        this.$store.commit("user/setAuth", true);
+        UserLocalStorageRepository.setAuth(1);
+        this.$router.push("/");
+
+        return;
+      }
+
+      if (data.message) {
+        this.$store.commit("infoPopup/setMessage", data.message);
+        this.$store.commit("infoPopup/show");
+      }
+
+      this.buttonDisabled = false;
     },
   },
 

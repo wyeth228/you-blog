@@ -8,27 +8,29 @@
       <auth-or-section class="mb-6" />
 
       <form>
-        <div class="mb-4 opacity-40">Введите ваши данные, чтобы войти</div>
+        <div class="mb-4 text-gray-400">Введите ваши данные, чтобы войти</div>
         <div class="mb-4">
-          <input
-            class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
-            type="email"
-            placeholder="E-mail"
+          <auth-default-input
+            class="mb-2 border-red-300"
+            v-model="email"
+            :input-type="'email'"
+            :placeholder="'E-mail'"
           />
           <p class="hidden text-red-500 text-xs italic">Введите e-mail</p>
         </div>
         <div class="mb-4">
-          <input
-            class="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 mb-1 leading-tight focus:outline-none focus:shadow-outline"
-            type="password"
-            placeholder="Пароль"
+          <auth-default-input
+            class="mb-2 border-red-300"
+            v-model="password"
+            :input-type="'password'"
+            :placeholder="'Пароль'"
           />
           <p class="hidden text-red-500 text-xs italic">Введите пароль</p>
         </div>
         <div class="flex items-center justify-between">
           <button
+            @click.prevent="signIn"
             class="bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
           >
             Войти
           </button>
@@ -55,7 +57,52 @@
 </template>
 
 <script lang="ts">
+import AuthFetchClient from "../../api/AuthFetchClient";
+import Config from "../../helpers/Config";
+import UserLocalStorageRepository from "../../repositories/UserLocalStorageRepository";
+
+const authFetchClient = new AuthFetchClient(
+  Config.API_URL,
+  Config.API_SIGNUP_PATH,
+  Config.API_SIGNIN_PATH,
+  Config.API_VK_AUTH_PATH,
+  Config.API_GOOGLE_AUTH_PATH
+);
+
 export default {
   layout: "auth",
+
+  data: () => ({
+    email: "",
+    password: "",
+
+    buttonDisabled: false,
+  }),
+
+  methods: {
+    async signIn(e): Promise<void> {
+      this.buttonDisabled = true;
+
+      const { statusCode, data } = await authFetchClient.signIn({
+        email: this.email,
+        password: this.password,
+      });
+
+      if (statusCode === 204) {
+        this.$store.commit("user/setAuth", true);
+        UserLocalStorageRepository.setAuth(1);
+        this.$router.push("/");
+
+        return;
+      }
+
+      if (data.message) {
+        this.$store.commit("infoPopup/setMessage", data.message);
+        this.$store.commit("infoPopup/show");
+      }
+
+      this.buttonDisabled = false;
+    },
+  },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center">
-    <span class="opacity-60">Войти с помощью</span>
+    <span class="text-gray-400">Войти с помощью</span>
 
     <auth-social-wrapper
       v-for="(social, idx) of socials"
@@ -24,7 +24,8 @@ import UserLocalStorageRepository from "../repositories/UserLocalStorageReposito
 const authFetchClient = new AuthFetchClient(
   Config.API_URL,
   Config.API_SIGNUP_PATH,
-  Config.API_VK_AUTH_PATH
+  Config.API_VK_AUTH_PATH,
+  Config.API_GOOGLE_AUTH_PATH
 );
 
 export default {
@@ -47,10 +48,19 @@ export default {
   }),
 
   async created(): Promise<void> {
-    const { code } = this.$route.query;
+    const { type, code } = this.$route.query;
 
-    if (code) {
-      this.vkAuth(code);
+    if (!type) {
+      return;
+    }
+
+    switch (type) {
+      case "vk":
+        this.vkAuth(code);
+        break;
+      case "google":
+        this.googleAuth(code);
+        break;
     }
   },
 
@@ -69,7 +79,8 @@ export default {
     },
     async vkAuth(vkCode?: string): Promise<void> {
       try {
-        const vkRedirectUrl = Config.APP_URL + Config.APP_VK_REDIRECT_PATH;
+        const vkRedirectUrl =
+          Config.APP_URL + Config.APP_VK_REDIRECT_PATH + "?type=vk";
 
         const statusCode = await authFetchClient.authWithVK(
           vkRedirectUrl,
@@ -82,16 +93,36 @@ export default {
 
         if (statusCode === 204) {
           this.$store.commit("user/setAuth", true);
-
           UserLocalStorageRepository.setAuth(1);
-
           this.$router.push("/");
         }
       } catch (e: any) {
         console.warn(e);
       }
     },
-    async googleAuth(): Promise<void> {},
+    async googleAuth(googleCode?: string): Promise<void> {
+      try {
+        const googleRedirectUrl =
+          Config.APP_URL + Config.APP_GOOGLE_REDIRECT_PATH + "?type=google";
+
+        const statusCode = await authFetchClient.authWithGoogle(
+          googleRedirectUrl,
+          googleCode
+        );
+
+        if (statusCode === 404) {
+          return this.$router.push({ path: "/auth/signup?type=google" });
+        }
+
+        if (statusCode === 204) {
+          this.$store.commit("user/setAuth", true);
+          UserLocalStorageRepository.setAuth(1);
+          this.$router.push("/");
+        }
+      } catch (e: any) {
+        console.warn(e);
+      }
+    },
   },
 };
 </script>
