@@ -31,33 +31,35 @@
 </template>
 
 <script lang="ts">
-export default {
-  props: {
-    value: String,
-    inputType: {
-      type: String,
-      default: "text",
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
-  },
+  import Vue from "vue";
 
-  methods: {
-    handleEmptyClick(): void {
-      this.$emit("input", "");
+  export default Vue.extend({
+    props: {
+      value: String,
+      inputType: {
+        type: String,
+        default: "text",
+      },
+      placeholder: {
+        type: String,
+        default: "",
+      },
     },
-  },
 
-  computed: {
-    emptyButtonActive(): boolean {
-      if (this.value.length > 0) {
-        return true;
-      }
-
-      return false;
+    methods: {
+      handleEmptyClick(): void {
+        this.$emit("input", "");
+      },
     },
-  },
-};
+
+    computed: {
+      emptyButtonActive(): boolean {
+        if (this.value.length > 0) {
+          return true;
+        }
+
+        return false;
+      },
+    },
+  });
 </script>

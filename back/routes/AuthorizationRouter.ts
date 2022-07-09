@@ -36,6 +36,11 @@ const getAuthorizationRouter = (
     PASSWORD_ENCODE_CONFIG,
     Crypto
   );
+  const axiosInstance = Axios.create({
+    validateStatus(status: number): boolean {
+      return status < 500;
+    },
+  });
 
   const authController: AuthorizationController = new AuthorizationController(
     new AuthorizationService(
@@ -45,8 +50,8 @@ const getAuthorizationRouter = (
         new ValidUserCredentials(new FilterXSS())
       ),
       jwtToken,
-      new VKOAuth(VK_CONFIG, Axios),
-      new GoogleOAuth(GOOGLE_CONFIG, Axios),
+      new VKOAuth(VK_CONFIG, axiosInstance),
+      new GoogleOAuth(GOOGLE_CONFIG, axiosInstance, Buffer),
       passwordHash
     ),
     new ApiResponseHandler()

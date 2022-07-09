@@ -215,10 +215,10 @@ export default class AuthorizeController {
     }
 
     try {
-      const { accessToken, refreshToken, user } =
+      const { accessToken, refreshToken, wrongPassword, user } =
         await this._authorizationService.signInSimple(email, password);
 
-      if (!user) {
+      if (!user || wrongPassword) {
         res
           .status(400)
           .json(

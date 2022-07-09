@@ -5,22 +5,33 @@ import * as cors from "cors";
 
 import getAuthorizationRouter from "./routes/AuthorizationRouter";
 
-require("dotenv").config({ path: ".env." + process.env.NODE_ENV });
+import { APP_CONFIG, MYSQL_CONFIG } from "./helpers/Configs";
 
-async function startApplication() {
+async function bootstrap() {
   const app: express.Application = express();
-  const PORT = process.env.PORT || 1000;
+  const PORT = APP_CONFIG.PORT || 1000;
 
   app.use(express.json({ limit: "10kb" }));
   app.use(express.urlencoded({ extended: true, limit: "10kb" }));
   app.use(cookieParser());
-  app.use(cors());
+  app.use(
+    cors({
+      credentials: true,
+      origin: function (origin, callback) {
+        if (APP_CONFIG.ORIGINS.includes(origin)) {
+          return callback(null, true);
+        }
+
+        callback(new Error("Not allowed by CORS"));
+      },
+    })
+  );
 
   const mySQLConnection: mysql2.Connection = await mysql2.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    database: process.env.MYSQL_DATABASE,
-    password: process.env.MYSQL_PASSWORD,
+    host: MYSQL_CONFIG.HOST,
+    user: MYSQL_CONFIG.USER,
+    database: MYSQL_CONFIG.DATABASE,
+    password: MYSQL_CONFIG.PASSWORD,
   });
 
   app.use("/authorization", getAuthorizationRouter(mySQLConnection));
@@ -30,4 +41,4 @@ async function startApplication() {
   });
 }
 
-startApplication();
+bootstrap();

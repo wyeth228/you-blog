@@ -57,52 +57,53 @@
 </template>
 
 <script lang="ts">
-import AuthFetchClient from "../../api/AuthFetchClient";
-import Config from "../../helpers/Config";
-import UserLocalStorageRepository from "../../repositories/UserLocalStorageRepository";
+  import Vue from "vue";
 
-const authFetchClient = new AuthFetchClient(
-  Config.API_URL,
-  Config.API_SIGNUP_PATH,
-  Config.API_SIGNIN_PATH,
-  Config.API_VK_AUTH_PATH,
-  Config.API_GOOGLE_AUTH_PATH
-);
+  import AuthFetchClient from "../../api/AuthFetchClient";
+  import FetchClient from "../../api/FetchClient";
+  import Config from "../../helpers/Config";
 
-export default {
-  layout: "auth",
+  const authFetchClient = new AuthFetchClient(
+    new FetchClient({ "Content-Type": "application/json" }),
+    Config.API_URL,
+    Config.API_SIGNUP_PATH,
+    Config.API_SIGNIN_PATH,
+    Config.API_VK_AUTH_PATH,
+    Config.API_GOOGLE_AUTH_PATH
+  );
 
-  data: () => ({
-    email: "",
-    password: "",
+  export default Vue.extend({
+    layout: "auth",
 
-    buttonDisabled: false,
-  }),
+    data: () => ({
+      email: "",
+      password: "",
 
-  methods: {
-    async signIn(e): Promise<void> {
-      this.buttonDisabled = true;
+      buttonDisabled: false,
+    }),
 
-      const { statusCode, data } = await authFetchClient.signIn({
-        email: this.email,
-        password: this.password,
-      });
+    methods: {
+      async signIn(): Promise<void> {
+        this.buttonDisabled = true;
 
-      if (statusCode === 204) {
-        this.$store.commit("user/setAuth", true);
-        UserLocalStorageRepository.setAuth(1);
-        this.$router.push("/");
+        const { statusCode, data } = await authFetchClient.signIn({
+          email: this.email,
+          password: this.password,
+        });
 
-        return;
-      }
+        if (statusCode === 204) {
+          this.$router.push("/");
 
-      if (data.message) {
-        this.$store.commit("infoPopup/setMessage", data.message);
-        this.$store.commit("infoPopup/show");
-      }
+          return;
+        }
 
-      this.buttonDisabled = false;
+        if (data.message) {
+          this.$store.commit("infoPopup/setMessage", data.message);
+          this.$store.commit("infoPopup/show");
+        }
+
+        this.buttonDisabled = false;
+      },
     },
-  },
-};
+  });
 </script>

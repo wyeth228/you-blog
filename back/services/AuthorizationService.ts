@@ -9,6 +9,13 @@ import {
 import PasswordHash from "../helpers/PasswordHash";
 import { ApiErrorTypes } from "../helpers/ApiResponseHandler";
 
+interface SimpleSignInResult {
+  accessToken: string | false;
+  refreshToken: string | false;
+  wrongPassword: boolean;
+  user: IUser | false;
+}
+
 export class AuthorizationService {
   constructor(
     private readonly _usersService: UsersService,
@@ -94,36 +101,43 @@ export class AuthorizationService {
   async signInSimple(
     email: string,
     password: string
-  ): Promise<{
-    accessToken: string | false;
-    refreshToken: string | false;
-    user: IUser | false;
-  }> {
+  ): Promise<SimpleSignInResult> {
+    const result = {
+      accessToken: false,
+      refreshToken: false,
+      wrongPassword: false,
+      user: false,
+    } as SimpleSignInResult;
+
     const user = await this._usersService.findUserWithEmail(email);
 
-    if (!user || this._passwordHash.gen(password) !== user.password) {
-      return {
-        accessToken: false,
-        refreshToken: false,
-        user,
-      };
+    if (!user) {
+      return result;
     }
 
-    return {
-      accessToken: this._jwtToken.create(
-        {
-          userId: user.id,
-        },
-        "access"
-      ),
-      refreshToken: this._jwtToken.create(
-        {
-          userId: user.id,
-        },
-        "refresh"
-      ),
-      user,
-    };
+    result.user = user;
+
+    if (this._passwordHash.gen(password) !== user.password) {
+      result.wrongPassword = true;
+
+      return result;
+    }
+
+    result.accessToken = this._jwtToken.create(
+      {
+        userId: user.id,
+      },
+      "access"
+    );
+
+    result.refreshToken = this._jwtToken.create(
+      {
+        userId: user.id,
+      },
+      "refresh"
+    );
+
+    return result;
   }
 
   async checkingBeforeSignUp(

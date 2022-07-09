@@ -1,6 +1,6 @@
 const UserLocalStorageRepository = {
-  getAuth(): string {
-    return localStorage.getItem("auth") || "";
+  getAuth(): string | null {
+    return localStorage.getItem("auth");
   },
 
   setAuth(value: 1 | 0): void {

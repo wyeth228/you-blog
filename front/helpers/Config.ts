@@ -8,4 +8,4 @@ export default {
   API_GOOGLE_AUTH_PATH: process.env.VUE_APP_API_GOOGLE_AUTH_PATH,
   API_SIGNUP_PATH: process.env.VUE_APP_API_SIGNUP_PATH,
   API_SIGNIN_PATH: process.env.VUE_APP_API_SIGNIN_PATH,
-};
+} as Record<string, string>;

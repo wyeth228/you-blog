@@ -12,13 +12,11 @@
     "experimentalDecorators": true,
     "alwaysStrict": true,
     "baseUrl": ".",
-    "jsx": "preserve",
     "paths": {
       "~/*": ["./*"],
       "@/*": ["./*"]
     },
     "types": ["@nuxt/types", "@types/node"]
   },
-  "include": ["declarations"],
   "exclude": ["node_modules", ".nuxt", "dist"]
 }

@@ -1,3 +1,5 @@
+import FetchClient from "./FetchClient";
+
 type StatusCode = number;
 
 interface ServerResponse {
@@ -13,6 +15,7 @@ interface IUserCredentials {
 
 export default class AuthFetchClient {
   constructor(
+    private readonly _fetchClient: FetchClient,
     readonly API_URL: string,
     readonly API_SIGNUP_PATH: string,
     readonly API_SIGNIN_PATH: string,
@@ -24,16 +27,13 @@ export default class AuthFetchClient {
     vkRedirectUrl: string,
     vkCode?: string
   ): Promise<StatusCode> {
-    const res = await fetch(this.API_URL + this.VK_AUTH_PATH, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const res = await this._fetchClient.post(
+      this.API_URL + this.VK_AUTH_PATH,
+      JSON.stringify({
         vk_redirect_url: vkRedirectUrl,
         vk_code: vkCode || "",
-      }),
-    });
+      })
+    );
 
     if (res.status === 302) {
       const data = await res.json();
@@ -50,16 +50,13 @@ export default class AuthFetchClient {
     googleRedirectUrl: string,
     googleCode?: string
   ): Promise<StatusCode> {
-    const res = await fetch(this.API_URL + this.GOOGLE_AUTH_PATH, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const res = await this._fetchClient.post(
+      this.API_URL + this.GOOGLE_AUTH_PATH,
+      JSON.stringify({
         google_redirect_url: googleRedirectUrl,
         google_code: googleCode || "",
-      }),
-    });
+      })
+    );
 
     if (res.status === 302) {
       const data = await res.json();
@@ -76,18 +73,15 @@ export default class AuthFetchClient {
     userData: IUserCredentials,
     type: "simple" | "vk" | "google"
   ): Promise<ServerResponse> {
-    const res = await fetch(this.API_URL + this.API_SIGNUP_PATH, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const res = await this._fetchClient.post(
+      this.API_URL + this.API_SIGNUP_PATH,
+      JSON.stringify({
         email: userData.email,
         username: userData.username,
         password: userData.password,
         type: type,
-      }),
-    });
+      })
+    );
 
     let data = {};
 
@@ -101,16 +95,13 @@ export default class AuthFetchClient {
   async signIn(
     userData: Pick<IUserCredentials, "email" | "password">
   ): Promise<ServerResponse> {
-    const res = await fetch(this.API_URL + this.API_SIGNIN_PATH, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const res = await this._fetchClient.post(
+      this.API_URL + this.API_SIGNIN_PATH,
+      JSON.stringify({
         email: userData.email,
         password: userData.password,
-      }),
-    });
+      })
+    );
 
     let data = {};
 

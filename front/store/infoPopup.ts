@@ -5,18 +5,18 @@ export default {
     message: "Message",
   }),
   mutations: {
-    show(state) {
+    show(state: any) {
       state.visible = true;
     },
-    close(state) {
+    close(state: any) {
       state.visible = false;
     },
-    setMessage(state, message) {
+    setMessage(state: any, message: string) {
       state.message = message;
     },
   },
   getters: {
-    isVisible: (state) => state.visible,
-    message: (state) => state.message,
+    isVisible: (state: any) => state.visible,
+    message: (state: any) => state.message,
   },
 };

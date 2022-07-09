@@ -3,9 +3,11 @@
 </template>
 
 <script lang="ts">
-export default {
-  mounted(): void {
-    this.$router.push("/auth");
-  },
-};
+  import Vue from "vue";
+
+  export default Vue.extend({
+    mounted(): void {
+      this.$router.push("/auth");
+    },
+  });
 </script>
