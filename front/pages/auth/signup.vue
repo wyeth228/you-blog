@@ -1,6 +1,6 @@
 <template>
   <main class="w-full max-w-lg">
-    <div class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-12">
+    <div class="flex flex-col mt-6 p-12 border-4 border-black">
       <auth-logo class="mb-14" />
 
       <auth-with-socials class="mb-6" />
@@ -13,8 +13,8 @@
         </div>
         <div class="mb-4">
           <auth-default-input
-            class="mb-2 border-red-300"
-            :class="{ 'border-2': emailError }"
+            class="mb-2"
+            :class="{ 'border-red-400': emailError }"
             v-model="email"
             :input-type="'email'"
             :placeholder="'E-mail'"
@@ -25,8 +25,8 @@
         </div>
         <div class="mb-4">
           <auth-default-input
-            class="mb-2 border-red-300"
-            :class="{ 'border-2': usernameError }"
+            class="mb-2"
+            :class="{ 'border-red-400': usernameError }"
             v-model="username"
             :input-type="'text'"
             :placeholder="'Никнейм'"
@@ -37,8 +37,8 @@
         </div>
         <div class="mb-4">
           <auth-default-input
-            class="mb-2 border-red-300"
-            :class="{ 'border-2': passwordError }"
+            class="mb-2"
+            :class="{ 'border-red-400': passwordError }"
             v-model="password"
             :input-type="'password'"
             :placeholder="'Пароль'"
@@ -49,8 +49,8 @@
         </div>
         <div class="mb-6">
           <auth-default-input
-            class="mb-2 border-red-300"
-            :class="{ 'border-2': password2Error }"
+            class="mb-2"
+            :class="{ 'border-red-400': password2Error }"
             v-model="password2"
             :input-type="'password'"
             :placeholder="'Введите пароль еще раз'"
@@ -60,26 +60,22 @@
           </p>
         </div>
         <div class="flex items-center justify-between">
-          <button
-            @click.prevent="signUp"
+          <default-button
+            @click="signUp"
             :disabled="buttonDisabled"
-            class="w-full bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
+            class="w-full"
           >
             Регистрация
-          </button>
+          </default-button>
         </div>
       </form>
     </div>
 
-    <section class="w-full max-w-screen-sm shadow-md p-6 text-center mt-2">
+    <section
+      class="w-full max-w-screen-sm mt-2 p-6 text-center border-4 border-black"
+    >
       <span>Уже есть аккаунт?</span>
-      <nuxt-link
-        class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-500"
-        to="/auth/signin"
-      >
-        Войдите
-      </nuxt-link>
+      <default-href href="/auth/signin" text="Войдите" />
     </section>
   </main>
 </template>
@@ -161,7 +157,9 @@
 
         return true;
       },
-      async signUp(): Promise<void> {
+      async signUp(e: Event): Promise<void> {
+        e.preventDefault();
+
         this.buttonDisabled = true;
 
         if (!this.allFieldsValid()) {

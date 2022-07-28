@@ -1,20 +1,17 @@
 <template>
-  <header class="header p-2 border-b-2 border-gray-500 border-opacity-20">
+  <header class="header h-20 mb-4 p-2 shadow flex items-center">
     <div class="container mx-auto flex items-center justify-between">
       <div class="flex items-center">
-        <nuxt-link to="/">
-          <h1 class="text-3xl font-bold">
+        <h1 class="text-3xl font-bold">
+          <nuxt-link to="/">
             YOU<span class="text-green-300">BLOG</span>
-          </h1>
-        </nuxt-link>
+          </nuxt-link>
+        </h1>
       </div>
 
-      <div class="flex items-center justify-center uppercase font-bold">
-        <nuxt-link
-          class="flex items-center ml-8 mr-8 hover:text-green-300 transition"
-          to="/profile"
-        >
-          Профиль
+      <div class="flex items-center uppercase">
+        <nuxt-link class="flex items-center" to="/profile">
+          <div class="w-8 h-8 bg-gray-600 rounded-sm"></div>
         </nuxt-link>
       </div>
     </div>

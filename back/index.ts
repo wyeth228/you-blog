@@ -9,7 +9,7 @@ import { APP_CONFIG, MYSQL_CONFIG } from "./helpers/Configs";
 
 async function bootstrap() {
   const app: express.Application = express();
-  const PORT = APP_CONFIG.PORT || 1000;
+  const PORT = APP_CONFIG.PORT || 4000;
 
   app.use(express.json({ limit: "10kb" }));
   app.use(express.urlencoded({ extended: true, limit: "10kb" }));
@@ -18,11 +18,13 @@ async function bootstrap() {
     cors({
       credentials: true,
       origin: function (origin, callback) {
-        if (APP_CONFIG.ORIGINS.includes(origin)) {
-          return callback(null, true);
-        }
+        callback(null, true);
 
-        callback(new Error("Not allowed by CORS"));
+        // if (origin && APP_CONFIG.ORIGINS.includes(origin)) {
+        //   return callback(null, true);
+        // }
+
+        // callback(new Error("Not allowed by CORS"));
       },
     })
   );

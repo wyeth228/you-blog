@@ -1,6 +1,6 @@
 <template>
   <main class="w-full max-w-lg">
-    <div class="flex flex-col mt-6 border-t-4 border-green-300 shadow-md p-12">
+    <div class="flex flex-col mt-6 p-12 border-4 border-black">
       <auth-logo class="mb-14" />
 
       <auth-with-socials class="mb-6" />
@@ -11,7 +11,7 @@
         <div class="mb-4 text-gray-400">Введите ваши данные, чтобы войти</div>
         <div class="mb-4">
           <auth-default-input
-            class="mb-2 border-red-300"
+            class="mb-2"
             v-model="email"
             :input-type="'email'"
             :placeholder="'E-mail'"
@@ -20,7 +20,7 @@
         </div>
         <div class="mb-4">
           <auth-default-input
-            class="mb-2 border-red-300"
+            class="mb-2"
             v-model="password"
             :input-type="'password'"
             :placeholder="'Пароль'"
@@ -28,30 +28,17 @@
           <p class="hidden text-red-500 text-xs italic">Введите пароль</p>
         </div>
         <div class="flex items-center justify-between">
-          <button
-            @click.prevent="signIn"
-            class="bg-blue-400 hover:bg-blue-500 disabled:bg-blue-100 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Войти
-          </button>
-          <a
-            class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-500"
-            href="#"
-          >
-            Забыли пароль?
-          </a>
+          <default-button @click="signIn">Войти</default-button>
+          <default-href href="'#'" text="Забыли пароль?" />
         </div>
       </form>
     </div>
 
-    <section class="w-full max-w-screen-sm shadow-md p-6 text-center mt-2">
+    <section
+      class="w-full max-w-screen-sm mt-2 p-6 text-center border-4 border-black"
+    >
       <span>Нет аккаунта?</span>
-      <nuxt-link
-        class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-500"
-        to="/auth/signup"
-      >
-        Зарегистрируйтесь
-      </nuxt-link>
+      <default-href href="/auth/signup" text="Зарегистрируйтесь" />
     </section>
   </main>
 </template>
@@ -83,7 +70,9 @@
     }),
 
     methods: {
-      async signIn(): Promise<void> {
+      async signIn(e: Event): Promise<void> {
+        e.preventDefault();
+
         this.buttonDisabled = true;
 
         const { statusCode, data } = await authFetchClient.signIn({

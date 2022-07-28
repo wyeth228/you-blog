@@ -14,6 +14,8 @@
 </template>
 
 <script lang="ts">
+  import Vue from "vue";
+
   import VkSvg from "@/assets/img/socials/vk.svg";
   import GoogleSvg from "@/assets/img/socials/google.svg";
 
@@ -30,7 +32,7 @@
     Config.API_GOOGLE_AUTH_PATH
   );
 
-  export default {
+  export default Vue.extend({
     components: {
       VkSvg,
       GoogleSvg,
@@ -49,7 +51,7 @@
       ],
     }),
 
-    async created(): Promise<void> {
+    async beforeMount(): Promise<void> {
       const { type, code } = this.$route.query;
 
       if (!type) {
@@ -125,5 +127,5 @@
         }
       },
     },
-  };
+  });
 </script>

@@ -1,13 +1,17 @@
 <template>
-  <h1>Profile</h1>
+  <main class="p-4">
+    <div class="container mx-auto">
+      <h1 class="text-xl">Профиль</h1>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
   import Vue from "vue";
 
   export default Vue.extend({
-    mounted(): void {
-      this.$router.push("/auth");
-    },
+    name: "profile",
+
+    middleware: ["checkAuth"],
   });
 </script>

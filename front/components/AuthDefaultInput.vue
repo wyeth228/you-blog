@@ -1,11 +1,11 @@
 <template>
-  <div class="flex shadow">
+  <div class="flex border-b-2 border-black">
     <input
       @input="$emit('input', $event.target.value)"
       :value="value"
       :type="inputType"
       :placeholder="placeholder"
-      class="appearance-none w-full py-2 px-3 text-gray-700 leading-tight focus:shadow-outline"
+      class="appearance-none w-full py-2 px-3 text-gray-700 leading-tigh"
     />
     <button
       @click.prevent="handleEmptyClick"
