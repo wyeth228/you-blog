@@ -1,6 +1,6 @@
 <template>
   <nuxt-link
-    class="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-500 underline"
+    class="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-900 underline"
     :to="href"
   >
     {{ text }}
@@ -20,10 +20,6 @@
         type: String,
         default: "",
       },
-    },
-
-    mounted() {
-      console.log(this.href);
     },
   });
 </script>

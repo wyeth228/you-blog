@@ -52,13 +52,13 @@
     }),
 
     async beforeMount(): Promise<void> {
-      const { type, code } = this.$route.query;
+      const { auth_type, code } = this.$route.query;
 
-      if (!type) {
+      if (!auth_type) {
         return;
       }
 
-      switch (type) {
+      switch (auth_type) {
         case "vk":
           this.vkAuth(code as string);
           break;
@@ -84,7 +84,7 @@
       async vkAuth(vkCode?: string): Promise<void> {
         try {
           const vkRedirectUrl =
-            Config.APP_URL + Config.APP_VK_REDIRECT_PATH + "?type=vk";
+            Config.APP_URL + Config.APP_VK_REDIRECT_PATH + "?auth_type=vk";
 
           const statusCode = await authFetchClient.authWithVK(
             vkRedirectUrl,
@@ -92,7 +92,7 @@
           );
 
           if (statusCode === 404) {
-            this.$router.push({ path: "/auth/signup?type=vk" });
+            this.$router.push("/auth/signup?type=vk");
             return;
           }
 
@@ -106,7 +106,7 @@
       async googleAuth(googleCode?: string): Promise<void> {
         try {
           const googleRedirectUrl =
-            Config.APP_URL + Config.APP_GOOGLE_REDIRECT_PATH + "?type=google";
+            Config.APP_URL + Config.APP_GOOGLE_REDIRECT_PATH + "?auth_type=google";
 
           const statusCode = await authFetchClient.authWithGoogle(
             googleRedirectUrl,
@@ -114,8 +114,7 @@
           );
 
           if (statusCode === 404) {
-            this.$router.push({ path: "/auth/signup?type=google" });
-
+            this.$router.push("/auth/signup?type=google");
             return;
           }
 

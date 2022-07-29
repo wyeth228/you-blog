@@ -1,4 +1,5 @@
 import { Buffer } from "buffer";
+import * as QueryString from "querystring";
 import * as express from "express";
 import * as Crypto from "crypto";
 import { FilterXSS } from "xss";
@@ -51,7 +52,7 @@ const getAuthorizationRouter = (
       ),
       jwtToken,
       new VKOAuth(VK_CONFIG, axiosInstance),
-      new GoogleOAuth(GOOGLE_CONFIG, axiosInstance, Buffer),
+      new GoogleOAuth(GOOGLE_CONFIG, axiosInstance, QueryString),
       passwordHash
     ),
     new ApiResponseHandler()

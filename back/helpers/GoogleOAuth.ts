@@ -1,5 +1,6 @@
 import { Axios } from "axios";
 import { Buffer } from "buffer";
+import * as QueryString from "querystring";
 
 export interface IGoogleUserAccessData {
   accessToken: string;
@@ -19,12 +20,8 @@ export class GoogleOAuth {
   constructor(
     private readonly _googleConfig: IGoogleConfig,
     private readonly _axios: Axios,
-    private readonly _buffer: typeof Buffer
+    private readonly _queryString: typeof QueryString
   ) {}
-
-  private _decodeURIComponentGoogleCode(googleCode: string): string {
-    return this._buffer.from(googleCode).toString("utf-8");
-  }
 
   async getUserAccessData(
     googleCode: string,
@@ -37,7 +34,7 @@ export class GoogleOAuth {
         client_secret: this._googleConfig.CLIENT_SECRET,
         redirect_uri: redirectUrl,
         grant_type: "authorization_code",
-        code: this._decodeURIComponentGoogleCode(googleCode),
+        code: this._queryString.unescape(googleCode),
       }
     );
 
