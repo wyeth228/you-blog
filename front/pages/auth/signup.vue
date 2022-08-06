@@ -3,9 +3,13 @@
     <div class="flex flex-col mt-6 p-12 border-4 border-black">
       <auth-logo class="mb-14" />
 
-      <auth-with-socials class="mb-6" />
-
-      <auth-or-section class="mb-6" />
+      <template v-if="$route.query.type">
+        <auth-registration-type-info />
+      </template>
+      <template v-else>
+        <auth-with-socials class="mb-6" />
+        <auth-or-section class="mb-6" />
+      </template>
 
       <form>
         <div class="mb-4 text-gray-400">

@@ -1,23 +1,15 @@
 <template>
-  <main class="p-4">
-    <div class="container mx-auto">
-      <h1 class="text-xl">Написать пост</h1>
+  <main>
+    <div class="container mx-auto p-4 border-4 border-black">
+      <div class="max-w-3xl mx-auto">
+        <post-editor :post-mode="'edit'" />
 
-      <editor class="shadow mt-4 p-4" :config="editorConfig" />
+        <div class="flex justify-end">
+          <default-button class="w-full max-w-xs mt-4">
+            Публикация
+          </default-button>
+        </div>
+      </div>
     </div>
   </main>
 </template>
-
-<script>
-  export default {
-    name: "create",
-
-    data: () => ({
-      editorConfig: {
-        placeholder: "Напишите что нибудь...",
-      },
-    }),
-
-    mounted() {},
-  };
-</script>
