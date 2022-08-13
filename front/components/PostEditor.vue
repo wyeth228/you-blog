@@ -1,33 +1,15 @@
 <template>
-  <div class="border-2 border-black p-4">
+  <div class="post-editor border-2 border-black p-4">
     <post-block
       v-for="(block, idx) of post.blocks"
       :block-type="block.type"
       :block-text="block.text"
       :editable="postMode === 'edit'"
+      :idx="idx"
       :key="idx"
+      @delete-block="deleteBlock"
     />
-    <div class="mt-2 p-2 bg-gray-100 flex justify-center">
-      <button
-        class="bg-blue-100p-2 p-2 border-2 border-black flex justify-center rounded"
-      >
-        <svg
-          class="w-8"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          viewBox="0 0 45.402 45.402"
-          xml:space="preserve"
-        >
-          <path
-            d="M41.267,18.557H26.832V4.134C26.832,1.851,24.99,0,22.707,0c-2.283,0-4.124,1.851-4.124,4.135v14.432H4.141
-		c-2.283,0-4.139,1.851-4.138,4.135c-0.001,1.141,0.46,2.187,1.207,2.934c0.748,0.749,1.78,1.222,2.92,1.222h14.453V41.27
-		c0,1.142,0.453,2.176,1.201,2.922c0.748,0.748,1.777,1.211,2.919,1.211c2.282,0,4.129-1.851,4.129-4.133V26.857h14.435
-		c2.283,0,4.134-1.867,4.133-4.15C45.399,20.425,43.548,18.557,41.267,18.557z"
-          />
-        </svg>
-      </button>
-    </div>
+    <post-block-creator @create-new-block="createNewBlock" />
   </div>
 </template>
 
@@ -56,5 +38,19 @@
         ],
       },
     }),
+
+    methods: {
+      createNewBlock(blockType: string): void {
+        this.post.blocks.push({
+          type: blockType,
+          text: "...",
+        });
+      },
+      deleteBlock(idx: number): void {
+        console.log(idx);
+
+        this.post.blocks.splice(idx, 1);
+      },
+    },
   });
 </script>

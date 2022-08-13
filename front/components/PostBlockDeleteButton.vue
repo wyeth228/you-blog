@@ -1,7 +1,6 @@
 <template>
   <button
-    v-if="isActive"
-    class="w-4 h-full absolute top-0 -left-4 flex justify-center items-center bg-red-200"
+    class="w-4 h-full absolute top-0 -left-4 flex justify-center items-center bg-red-100"
   >
     <svg
       class="w-4 opacity-50"
@@ -19,16 +18,3 @@
     </svg>
   </button>
 </template>
-
-<script lang="ts">
-  import Vue from "vue";
-
-  export default Vue.extend({
-    props: {
-      isActive: {
-        type: Boolean,
-        default: false,
-      },
-    },
-  });
-</script>

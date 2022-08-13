@@ -1,5 +1,5 @@
 <template>
-  <p class="p-2 outline-none focus:bg-gray-100 relative">
+  <p class="p-2">
     <slot></slot>
   </p>
 </template>
