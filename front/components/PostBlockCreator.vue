@@ -1,6 +1,16 @@
 <template>
   <div class="p-2 bg-gray-100 flex justify-center relative">
-    <default-button @click="toggleSelection">
+    <dropdown-menu :active="selectionActive">
+      <dropdown-menu-item
+        v-for="(block, idx) in blockTypes"
+        :key="idx"
+        @click.native="selectBlock(block.type)"
+      >
+        {{ block.text }}
+      </dropdown-menu-item>
+    </dropdown-menu>
+
+    <default-button @click.native="toggleSelection">
       <svg
         class="w-8"
         version="1.1"
@@ -17,31 +27,13 @@
         />
       </svg>
     </default-button>
-
-    <!-- Drop down  -->
-    <div
-      v-if="selectionActive"
-      class="absolute top-0 left-0 w-full bg-gray-200 border-2 border-black"
-    >
-      <!-- Drop down items  -->
-      <div
-        v-for="(block, idx) in blockTypes"
-        :key="idx"
-        @click="selectBlock(block.type)"
-        class="p-4 cursor-pointer hover:bg-white font-bold"
-      >
-        {{ block.text }}
-      </div>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from "vue";
-  import DefaultButton from "./DefaultButton.vue";
 
   export default Vue.extend({
-    components: { DefaultButton },
     data: () => ({
       selectionActive: false,
       blockTypes: [

@@ -7,12 +7,13 @@
     <component
       :is="'post-' + blockType"
       :contenteditable="editable"
-      @input.native="input"
+      @input.native="onInput"
       @focus.native="focusHandler"
       @blur.native="focusHandler"
+      @keydown.enter.native.prevent
       class="w-full outline-none focus:bg-gray-100"
     >
-      {{ blockText }}
+      {{ text }}
     </component>
   </div>
 </template>
@@ -42,11 +43,20 @@
 
     data: () => ({
       removeButtonIsActive: false,
+      text: "",
     }),
+
+    mounted(): void {
+      this.text = this.blockText;
+    },
 
     methods: {
       onInput(e: Event): void {
-        (e.target as HTMLElement).innerHTML.trim();
+        this.$emit(
+          "text-changed",
+          (e.target as HTMLElement).innerHTML.trim(),
+          this.idx
+        );
       },
       focusHandler(): void {
         const TIME_TO_HIDE_BTN = 150;

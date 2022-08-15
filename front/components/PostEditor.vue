@@ -8,6 +8,7 @@
       :idx="idx"
       :key="idx"
       @delete-block="deleteBlock"
+      @text-changed="textChanged"
     />
     <post-block-creator @create-new-block="createNewBlock" />
   </div>
@@ -15,6 +16,8 @@
 
 <script lang="ts">
   import Vue from "vue";
+
+  import PostLocalStorageRepository from "../repositories/PostLocalStorageRepository";
 
   export default Vue.extend({
     props: {
@@ -31,13 +34,17 @@
             type: "header",
             text: "Напишите что-нибудь...",
           },
-          {
-            type: "paragraph",
-            text: "fajfajwifjawfjaopwf dawoidjaiwjdioaw djaiwdjiawjdiawjdjawjda dad",
-          },
         ],
       },
     }),
+
+    mounted(): void {
+      const post = PostLocalStorageRepository.getPost();
+
+      if (post) {
+        this.post = JSON.parse(post);
+      }
+    },
 
     methods: {
       createNewBlock(blockType: string): void {
@@ -47,9 +54,22 @@
         });
       },
       deleteBlock(idx: number): void {
-        console.log(idx);
-
         this.post.blocks.splice(idx, 1);
+      },
+      textChanged(text: string, idx: number): void {
+        this.post.blocks[idx].text = text;
+      },
+      savePost() {
+        PostLocalStorageRepository.setPost(JSON.stringify(this.post));
+      },
+    },
+
+    watch: {
+      post: {
+        deep: true,
+        handler(): void {
+          this.savePost();
+        },
       },
     },
   });
